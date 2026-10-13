@@ -30,7 +30,87 @@ Parameter digunakan untuk memasukkan data ke dalam fungsi. Pada C++, data dapat 
 
 ## Guided
 
-### 1. ADT Mahasiswa
+### 1. ADT Buku
+
+**`buku.h`**
+
+```cpp
+#ifndef BUKU_H
+#define BUKU_H
+#include <iostream>
+
+using namespace std;
+
+struct Buku
+{
+    string judul;
+    int halaman;
+    string penulis;
+};
+
+void editIsi(string judul, int halaman, string penulis, Buku &buku);
+void tampilkanIsiBuku(Buku buku);
+bool checkPenulis(Buku buku);
+
+#endif
+```
+
+**`buku.cpp`**
+
+```cpp
+#include "buku.h"
+
+void editIsi(string judul, int halaman, string penulis, Buku &buku)
+{
+    buku.judul = judul;
+    buku.halaman = halaman;
+    buku.penulis = penulis;
+}
+
+void tampilkanIsiBuku(Buku buku)
+{
+    cout << "Judul: " << buku.judul << endl;
+    cout << "Halaman: " << buku.halaman << endl;
+    cout << "Penulis: " << buku.penulis << endl;
+}
+
+bool checkPenulis(Buku buku)
+{
+    return buku.penulis == "";
+}
+```
+
+**`main.cpp`**
+
+```cpp
+#include <iostream>
+#include "buku.h"
+
+using namespace std;
+
+int main()
+{
+    Buku novel;
+    string judul, penulis;
+    int halaman;
+
+    cout << "Masukkan judul buku: ";
+    cin >> judul;
+    cout << "Masukkan jumlah halaman: ";
+    cin >> halaman;
+    cout << "Masukkan nama penulis: ";
+    cin >> penulis;
+
+    editIsi(judul, halaman, penulis, novel);
+    tampilkanIsiBuku(novel);
+
+    cout << checkPenulis(novel) << endl;
+
+    return 0;
+}
+```
+
+### 2. ADT Mahasiswa
 
 **`mahasiswa.h`**
 
@@ -92,6 +172,12 @@ int main()
 ## Unguided
 
 ### 1. Data Mahasiswa
+
+Buat program yang menyimpan maksimal 10 data mahasiswa dalam array dengan field nama, NIM, UTS, UAS, tugas, dan nilai akhir. Nilai akhir dihitung dengan rumus `0.3 * UTS + 0.4 * UAS + 0.3 * tugas`.
+
+**Lokasi source code:** `Unguided/Soal1/`
+
+File yang digunakan: `main.cpp`, `simpan.cpp`, dan `simpan.h`.
 
 **`simpan.h`**
 
@@ -191,7 +277,13 @@ int main()
 
 ![Screenshot Output Unguided 1](Output/simpan1.png)
 
+Program menyimpan data mahasiswa dalam array dengan kapasitas maksimal 10 data. Fungsi `inputMhs()` menerima identitas dan nilai setiap mahasiswa, sedangkan `hitungNilaiAkhir()` menghitung nilai akhir berdasarkan bobot UTS 30%, UAS 40%, dan tugas 30%. Setelah semua data dimasukkan, program menampilkan nama, NIM, dan nilai akhir setiap mahasiswa.
+
 ### 2. ADT Pelajaran
+
+Buat ADT `Pelajaran` yang memiliki `namaMapel` dan `kodeMapel`, kemudian buat fungsi kreator dan prosedur untuk menampilkan data.
+
+**Lokasi source code:** `Unguided/Soal2/`
 
 **`pelajaran.h`**
 
@@ -257,7 +349,13 @@ int main()
 
 ![Screenshot Output Unguided 2](Output/pelajaran.png)
 
+Program menggunakan `struct pelajaran` untuk menyimpan nama dan kode mata pelajaran. Fungsi `create_pelajaran()` membuat objek pelajaran dan mengisi kedua field tersebut, sedangkan `tampil_pelajaran()` menampilkan data yang sudah dibuat.
+
 ### 3. Array 2D dan Pointer
+
+Buat program dengan dua array integer 2D berukuran 3x3 dan dua pointer integer. Program harus dapat menampilkan array, menukar isi array pada posisi tertentu, dan menukar isi dua variabel yang ditunjuk pointer.
+
+**Lokasi source code:** `Unguided/Soal3/`
 
 **`array.h`**
 
@@ -344,13 +442,14 @@ int main()
 
 ![Screenshot Output Unguided 3](Output/array.png)
 
+Program menampilkan dua array berukuran 3x3, kemudian menukar elemen pada baris kedua dan kolom kedua. Fungsi `tukarArray()` melakukan pertukaran elemen pada kedua array, sedangkan `tukarPointer()` menukar nilai variabel yang ditunjuk oleh pointer `p1` dan `p2`.
+
 ## Kesimpulan
 
 Praktikum Modul 3 membahas penyusunan program menggunakan struktur data dan fungsi yang dipisahkan ke dalam file header, file implementasi, serta program utama. Penerapan tersebut terlihat pada pengelolaan data mahasiswa, pembuatan ADT pelajaran, penggunaan array dua dimensi, dan pertukaran nilai dengan pointer.
 
 ## Referensi
 
-\[1\] Triase. (2020). Diktat Edisi Revisi : STRUKTUR DATA. Medan: UNIVERSTAS ISLAM NEGERI SUMATERA UTARA MEDAN.   
-\[2\] Indahyati, Uce., Rahmawati Yunianita. (2020). "BUKU AJAR ALGORITMA DAN PEMROGRAMAN DALAM BAHASA C++". Sidoarjo: Umsida Press. Diakses pada 10 Maret 2024 melalui [https://doi.org/10.21070/2020/978-623-6833-67-4](https://doi.org/10.21070/2020/978-623-6833-67-4). 
+[1] Triase. (2020). *Diktat Edisi Revisi: Struktur Data*. Medan: Universitas Islam Negeri Sumatera Utara Medan.
 
-...
+[2] Indahyati, Uce, dan Rahmawati Yunianita. (2020). *Buku Ajar Algoritma dan Pemrograman dalam Bahasa C++*. Sidoarjo: Umsida Press. https://doi.org/10.21070/2020/978-623-6833-67-4.
