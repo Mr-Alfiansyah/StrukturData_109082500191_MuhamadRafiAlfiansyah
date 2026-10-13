@@ -109,6 +109,7 @@ int main()
     return 0;
 }
 ```
+Program menggunakan struct Buku untuk menyimpan data buku. Fungsi editIsi() mengisi data, tampilkanIsiBuku() menampilkan data, dan checkPenulis() memeriksa nama penulis.
 
 ### 2. Mahasiswa
 
@@ -168,6 +169,7 @@ int main()
     return 0;
 }
 ```
+Program menggunakan struct mahasiswa untuk menyimpan NIM dan nilai. Fungsi inputMhs() menerima data mahasiswa, sedangkan rata2() menghitung rata-rata dari kedua nilai.
 
 ## Unguided
 
