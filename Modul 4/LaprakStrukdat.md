@@ -27,7 +27,7 @@ Node baru dibuat secara dinamis menggunakan operator `new`. Setelah node tidak d
 
 ## Guided
 
-### 1. Buku
+### 1. Implementasi Linked List
 
 **`list.h`**
 
@@ -431,13 +431,13 @@ int main()
     delFirst(List);
 }
 ```
-Program menggunakan struct Buku untuk menyimpan data buku. Fungsi editIsi() mengisi data, tampilkanIsiBuku() menampilkan data, dan checkPenulis() memeriksa nama penulis.
+
+data mahasiswa kek nama, NIM, umur itu disimpen di linked list. Nodenya dibuat pake `alokasi()`, terus disisipkan dengan `insertFirst()`, `insertLast()`, dan `insertAfter()`, jadi posisinya bisa di awal, di akhir, setelah node tertentu. Dari lima node yang dimasukkan, urutan listnya jadi Dhimas, Rizal, Satrio, Arvin, Joshua. Habis itu isi list sama jumlah nodenya ditampilkan, lalu `delFirst()` dipakai buat hapus node paling depan.
 
 ## Unguided
 
-### 1. Mahasiswa
-
-Buat program yang menyimpan maksimal 10 data mahasiswa dalam array dengan field nama, NIM, UTS, UAS, tugas, dan nilai akhir. Nilai akhir dihitung dengan rumus `0.3 * UTS + 0.4 * UAS + 0.3 * tugas`.
+### 1. ADT Singly Linked List
+Buat ADT singly linked list dengan infotype bertipe integer, address sebagai pointer ke ElmList, serta operasi createList, alokasi, dealokasi, printInfo, dan insertFirst.
 
 **`SL.h`**
 
@@ -547,11 +547,11 @@ int main()
 
 ![Screenshot Output Unguided 1](Output/SL.png)
 
-
+Node dengan nilai 2, 0, 8, 12, dan 9 dibuat pake `alokasi()` lalu disisipkan satu per satu dengan `insertFirst()`. Karena selalu disisipkan di depan, node yang terakhir masuk jadi yang paling depan, makanya output-nya `9 12 8 0 2`, urutannya kebalik dari urutan insert.
 
 ## Kesimpulan
 
-Praktikum Modul 3 membahas penyusunan program menggunakan struktur data dan fungsi yang dipisahkan ke dalam file header, file implementasi, serta program utama. Penerapan tersebut terlihat pada pengelolaan data mahasiswa, pembuatan ADT pelajaran, penggunaan array dua dimensi, dan pertukaran nilai dengan pointer.
+Dari praktikum ini aku jadi paham cara kerja singly linked list, yaitu data disimpan dalam node yang saling nyambung lewat pointer `next`, dan ukurannya bisa nambah atau berkurang sesuai kebutuhan karena node dibuat pakai `new`. Operasi dasarnya kayak `createList()`, `alokasi()`, `insertFirst()`, `insertLast()`, `insertAfter()`, sampai `delFirst()` juga sudah dicoba di guided. Di unguided kelihatan kalau `insertFirst()` selalu nyisipin node di depan, jadi urutan outputnya kebalik dari urutan input. Satu hal lagi, node yang sudah nggak dipakai harus dihapus pakai `delete` biar memorinya nggak bocor.
 
 ## Referensi
 
