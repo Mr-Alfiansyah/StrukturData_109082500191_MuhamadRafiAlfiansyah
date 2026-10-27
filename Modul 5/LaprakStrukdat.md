@@ -720,7 +720,7 @@ int main() {
 
 #### Output Unguided 1
 
-![Screenshot Output Unguided 1](Output/SL.png)
+![Screenshot Output Unguided 1](Output/SLL.png)
 
 Angka 2, 0, 8, 12, dan 9 dimasukkan ke dalam linked list menggunakan insertFirst(). Karena setiap angka dimasukkan ke bagian awal, urutan datanya menjadi 9, 12, 8, 0, dan 2. Fungsi findElm() digunakan untuk mencari angka 8, sedangkan totalInfo() digunakan untuk menghitung jumlah seluruh data yang menghasilkan nilai 31.
 
