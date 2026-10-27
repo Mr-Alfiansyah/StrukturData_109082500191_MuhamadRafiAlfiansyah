@@ -1,4 +1,4 @@
-# Laporan Praktikum Modul 5 - Singly Linked List (Bagian Kedua)
+# <h1 align="center">Laporan Praktikum Modul 4 - Singly Linked List (Bagian Pertama)</h1>
 
 <p align="center">Muhamad Rafi Alfiansyah - 109082500191</p>
 
@@ -42,35 +42,562 @@ Menampilkan isi list dan menjumlahkan seluruh info sama-sama memakai penelusuran
 
 Pada sequential search, kompleksitas waktu rata-rata maupun kasus terburuk adalah O(n) [2]. Pada linked list, akses ke elemen tertentu harus menelusuri dari awal sehingga kompleksitasnya O(n), sedangkan akses lewat indeks pada array adalah O(1) [1]. Sebaliknya, `insertFirst` tidak perlu menelusuri list karena hanya mengubah dua pointer.
 
+## Guided
+
+### 1. Implementasi Linked List Mahasiswa
+
+**`list.h`**
+
+```cpp
+#ifndef List_h
+#define List_h
+#define Nil NULL
+
+#include <iostream>
+using namespace std;
+
+struct mahasiswa
+{
+    string nama, nim;
+    int umur;
+};
+
+typedef mahasiswa dataMahasiswa;
+typedef struct node *address;
+
+struct node
+{
+    dataMahasiswa isidata;
+    address next;
+};
+
+struct linkedlist
+{
+    address first;
+};
+
+bool isEmpty(linkedlist List);
+void createList(linkedlist &List);
+address alokasi(string nama, string nim, int umur);
+void dealokasi(address &node);
+void printList(linkedlist list);
+void insertFirst(linkedlist &list, address nodeBaru);
+void insertAfter(linkedlist &list, address nodeBaru, address prev);
+void insertLast(linkedlist &list, address nodeBaru);
+
+void delFirst(linkedlist &list);
+void delLast(linkedlist &list);
+void delAfter(linkedlist &list, address nodeHapus, address nodePrev);
+int nbList(linkedlist list);
+void deleteList(linkedlist &list);
+
+void updateFirst(linkedlist &list);
+void updateLast(linkedlist &list);
+void updateAfter(linkedlist list, address &prev);
+void updateByNim(linkedlist list, string nim);
+    
+address findNodeByData(linkedlist List, string data);
+#endif
+
+#endif
+```
+
+**`list.cpp`**
+
+```cpp
+#include "list.h"
+#include <iostream>
+using namespace std;
+
+// I.S = Initial State / kondisi awal
+// F.S = Final State / kondisi akhir
+
+// fungsi untuk cek apakah list kosong atau tidak
+bool isEmpty(linkedlist List)
+{
+    if (List.first == Nil)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+// pembuatan linked list kosong
+void createList(linkedlist &List)
+{
+    /* I.S. sembarang
+       F.S. terbentuk list kosong */
+    List.first = Nil;
+}
+
+// pembuatan node baru dengan menerapkan manajemen memori
+address alokasi(string nama, string nim, int umur)
+{
+    /* I.S. sembarang
+       F.S. mengembalikan alamat node baru dengan isidata = sesuai parameter dan next = Nil */
+    address nodeBaru = new node;
+    nodeBaru->isidata.nama = nama;
+    nodeBaru->isidata.nim = nim;
+    nodeBaru->isidata.umur = umur;
+    nodeBaru->next = Nil;
+    return nodeBaru;
+}
+
+// penghapusan node dengan menerapkan manajemen memori
+void dealokasi(address &node)
+{
+    /* I.S. P terdefinisi
+       F.S. memori yang digunakan node dikembalikan ke sistem */
+    node->next = Nil;
+    delete node;
+}
+
+// prosedur-prosedur untuk insert / menambahkan node baru kedalam list
+void insertFirst(linkedlist &List, address nodeBaru)
+{
+    /* I.S. sembarang, P sudah dialokasikan
+       F.S. menempatkan elemen list (node) pada awal list */
+    nodeBaru->next = List.first;
+    List.first = nodeBaru;
+}
+
+void insertAfter(linkedlist &List, address nodeBaru, address Prev)
+{
+    /* I.S. sembarang, nodeBaru dan Prev alamat salah satu elemen list (node)
+       F.S. menempatkan elemen (node) sesudah elemen node Prev */
+    if (Prev != Nil)
+    {
+        nodeBaru->next = Prev->next;
+        Prev->next = nodeBaru;
+    }
+    else
+    {
+        cout << "Node sebelumnya tidak valid!" << endl;
+    }
+}
+
+void insertLast(linkedlist &List, address nodeBaru)
+{
+    /* I.S. sembarang, nodeBaru sudah dialokasikan
+       F.S. menempatkan elemen nodeBaru pada akhir list */
+    if (isEmpty(List))
+    {
+        List.first = nodeBaru;
+    }
+    else
+    {
+        address nodeBantu = List.first;
+        while (nodeBantu->next != Nil)
+        {
+            nodeBantu = nodeBantu->next;
+        }
+        nodeBantu->next = nodeBaru;
+    }
+}
+
+// prosedur-prosedur untuk delete / menghapus node yang ada didalam list
+void delFirst(linkedlist &List)
+{
+    /* I.S. list tidak kosong
+    F.S. node pertama di list terhapus*/
+    address nodeHapus;
+    if (isEmpty(List) == false)
+    {
+        nodeHapus = List.first;
+        List.first = List.first->next;
+        nodeHapus->next = Nil;
+        dealokasi(nodeHapus);
+    }
+    else
+    {
+        cout << "List kosong!" << endl;
+    }
+}
+
+void delLast(linkedlist &List)
+{
+    /* I.S. list tidak kosong
+    F.S. node terakhir di list terhapus */
+    address nodeHapus, nodePrev;
+    if (isEmpty(List) == false)
+    {
+        nodeHapus = List.first;
+        if (nodeHapus->next == Nil)
+        {
+            List.first->next = Nil;
+            dealokasi(nodeHapus);
+        }
+        else
+        {
+            while (nodeHapus->next != Nil)
+            {
+                nodePrev = nodeHapus;
+                nodeHapus = nodeHapus->next;
+            }
+            nodePrev->next = Nil;
+            dealokasi(nodeHapus);
+        }
+    }
+    else
+    {
+        cout << "list kosong" << endl;
+    }
+}
+
+void delAfter(linkedlist &List, address nodeHapus, address nodePrev)
+{
+    /* I.S. list tidak kosng, Prev alamat salah satu elemen list
+    F.S. nodeBantu adalah alamat dari Prev→next, menghapus Prev→next dari list */
+    if (isEmpty(List) == true)
+    {
+        cout << "List kosong!" << endl;
+    }
+    else
+    { // jika list tidak kosong
+        if (nodePrev != Nil && nodePrev->next != Nil)
+        {
+            nodeHapus = nodePrev->next;
+            nodePrev->next = nodeHapus->next;
+            nodeHapus->next = Nil;
+            dealokasi(nodeHapus);
+        }
+        else
+        {
+            cout << "Node sebelumnya (prev) tidak valid!" << endl;
+        }
+    }
+}
+
+// prosedur untuk menampilkan isi list
+void printList(linkedlist List)
+{
+    /* I.S. list mungkin kosong
+       F.S. jika list tidak kosong menampilkan semua info yang ada pada list */
+    if (isEmpty(List))
+    {
+        cout << "List kosong." << endl;
+    }
+    else
+    {
+        address nodeBantu = List.first;
+        while (nodeBantu != Nil)
+        {
+            cout << "Nama : " << nodeBantu->isidata.nama << ", NIM : " << nodeBantu->isidata.nim << ", umur : " << nodeBantu->isidata.umur << endl;
+            nodeBantu = nodeBantu->next;
+        }
+    }
+}
+
+// function untuk menampilkan jumlah node didalam list
+int nbList(linkedlist List)
+{
+    /* I.S. list sudah ada
+       F.S. menampilkan jumlah node didalam list*/
+    int count = 0;
+    address nodeBantu = List.first;
+    while (nodeBantu != Nil)
+    {
+        count++;
+        nodeBantu = nodeBantu->next;
+    }
+    return count;
+}
+
+// prosedur untuk menghapus list (menghapus semua node didalam list)
+void deleteList(linkedlist &List)
+{
+    /* I.S. list sudah ada
+       F.S. menghapus semua node didalam list*/
+    address nodeBantu, nodeHapus;
+    nodeBantu = List.first;
+    while (nodeBantu != Nil)
+    {
+        nodeHapus = nodeBantu;
+        nodeBantu = nodeBantu->next;
+        dealokasi(nodeHapus);
+    }
+    List.first = Nil;
+    cout << "List sudah terhapus!" << endl;
+}
+
+// prosedur-prosedur untuk melakukan update data node
+void updateFirst(linkedlist &list)
+{
+    if (isEmpty(list) == true)
+    {
+        cout << "List kosong!" << endl;
+    }
+    else
+    {
+        dataMahasiswa newData;
+        cout << "Masukan nama baru : ";
+        cin >> newData.nama;
+        cout << "Masukan nim baru : ";
+        cin >> newData.nim;
+        cout << "Masukan umur baru : ";
+        cin >> newData.umur;
+        list.first->isidata = newData;
+    }
+}
+
+void updateLast(linkedlist &list)
+{
+    if (isEmpty(list) == true)
+    {
+        cout << "List kosong!" << endl;
+    }
+    else
+    {
+        dataMahasiswa newData;
+        cout << "Masukan nama baru : ";
+        cin >> newData.nama;
+        cout << "Masukan nim baru : ";
+        cin >> newData.nim;
+        cout << "Masukan umur baru : ";
+        cin >> newData.umur;
+
+        address nodeBantu = list.first;
+        while (nodeBantu->next != Nil)
+        {
+            nodeBantu = nodeBantu->next;
+        }
+
+        nodeBantu->isidata = newData;
+    }
+}
+
+void updateAfter(linkedlist list, address &prev)
+{
+    if (isEmpty(list) == true)
+    {
+        cout << "List kosong!" << endl;
+    }
+    else if (prev == Nil || prev->next == Nil)
+    {
+        cout << "Node sebelumnya (prev) tidak valid!" << endl;
+    }
+    else
+    {
+    dataMahasiswa newData;
+    cout << "Masukan nama baru : ";
+    cin >> newData.nama;
+    cout << "Masukan nim baru : ";
+    cin >> newData.nim;
+    cout << "Masukan umur baru : ";
+    cin >> newData.umur;
+
+    prev->next->isidata = newData;
+    }
+}
+
+void updateByNim(linkedlist list, string nim)
+{
+    if (!isEmpty(list))
+    {
+        address nodeBantu = findNodeByData(list, nim);
+
+        if (nodeBantu != Nil)
+        {
+            dataMahasiswa newData;
+            cout << "Masukan nama baru : ";
+            cin >> nodeBantu->isidata.nama;
+            cout << "Masukan nim baru : ";
+            cin >> nodeBantu->isidata.nim;
+            cout << "Masukan umur baru : ";
+            cin >> nodeBantu->isidata.umur;
+
+            nodeBantu->isidata = newData;
+        }
+    }
+    else
+    {
+        cout << "List kosong!" << endl;
+    }
+}
+
+// prosedur-prosedur untuk searching data didalam list
+address findNodeByData(linkedlist List, string data)
+{
+    /* I.S. list mungkin kosong
+       F.S. menampilkan node yang sesuai dengan nama atau nim yang dicari */
+    if (isEmpty(List) == true)
+    {
+        cout << "List kosong!" << endl;
+    }
+    else
+    {
+        address nodeBantu = List.first;
+        int posisi = 0;
+        bool found = false;
+        while (nodeBantu != Nil)
+        {
+            posisi++;
+            if (nodeBantu->isidata.nama == data || nodeBantu->isidata.nim == data)
+            {
+                found = true;
+                return nodeBantu;
+            }
+            nodeBantu = nodeBantu->next;
+        }
+        if (found == false)
+        {
+            cout << "Node dengan data " << data << " tidak ditemukan!" << endl;
+        }
+    }
+    cout << endl;
+    return Nil;
+}
+
+void FindNodeByAddress(linkedlist List, address node)
+{
+    /* I.S. list mungkin kosong
+       F.S. menampilkan node yang sesuai dengan alamat yang dicari */
+    if (isEmpty(List) == true)
+    {
+        cout << "List kosong!" << endl;
+    }
+    else
+    {
+        address nodeBantu = List.first;
+        int posisi = 0;
+        bool found = false;
+        while (nodeBantu != Nil)
+        {
+            posisi++;
+            if (nodeBantu == node)
+            {
+                cout << "Node ditemukan pada posisi ke-" << posisi << "!" << endl;
+                cout << "Alamat Node : " << nodeBantu << endl;
+                cout << "Nama : " << nodeBantu->isidata.nama << ", NIM : " << nodeBantu->isidata.nim << ", umur : " << nodeBantu->isidata.umur << endl;
+                found = true;
+                break;
+            }
+            nodeBantu = nodeBantu->next;
+        }
+        if (found == false)
+        {
+            cout << "Node dengan alamat " << node << " tidak ditemukan dalam list!" << endl;
+        }
+    }
+    cout << endl;
+}
+
+void FindNodeByRange(linkedlist List, int nilaiAwal, int nilaiAkhir)
+{
+    /* I.S. list mungkin kosong
+       F.S. menampilkan semua node yang memiliki umur di dalam rentang nilaiAwal sampai nilaiAkhir */
+    if (isEmpty(List) == true)
+    {
+        cout << "List kosong!" << endl;
+    }
+    else
+    {
+        address nodeBantu = List.first;
+        int posisi = 0;
+        bool found = false;
+        cout << "--- Data diatas umur " << nilaiAwal << " dan dibawah " << nilaiAkhir << " ---" << endl;
+        while (nodeBantu != Nil)
+        {
+            posisi++;
+            int umur = nodeBantu->isidata.umur;
+            if (umur > nilaiAwal && umur < nilaiAkhir)
+            {
+                cout << "Data ditemukan pada posisi ke-" << posisi << " :" << endl;
+                cout << "Nama : " << nodeBantu->isidata.nama << ", NIM : " << nodeBantu->isidata.nim << ", umur : " << nodeBantu->isidata.umur << endl;
+                found = true;
+            }
+            nodeBantu = nodeBantu->next;
+        }
+        if (found == false)
+        {
+            cout << "Tidak ada data node dalam range tersebut!" << endl;
+        }
+    }
+    cout << endl;
+}
+```
+
+**`main.cpp`**
+
+```cpp
+#include "list.h"
+#include <iostream>
+using namespace std;
+
+int main(){
+		linkedlist List;
+    address nodeA, nodeB, nodeC, nodeD, nodeE = Nil;
+    createList(List);
+
+    nodeA = alokasi("Dhimas", "2311102151", 20);
+    nodeB = alokasi("Arvin", "2211110014", 21);
+    nodeC = alokasi("Rizal", "2311110029", 20);
+    nodeD = alokasi("Satrio", "2211102173", 21);
+    nodeE = alokasi("Joshua", "2311102133", 21);
+
+    insertFirst(List, nodeA);
+    insertLast(List, nodeB);
+    insertAfter(List, nodeC, nodeA);
+    insertAfter(List, nodeD, nodeC);
+    insertLast(List, nodeE);
+
+    cout << "--- ISI LIST SETELAH DILAKUKAN INSERT ---" << endl;
+    printList(List);
+    cout << "jumlah node : " << nbList(List) << endl;
+    cout << endl;
+
+    updateFirst(List);
+    cout << "--- ISI LIST SETELAH DILAKUKAN UPDATE FIRST ---" << endl;
+    printList(List);
+
+    updateLast(List);
+    cout << "--- ISI LIST SETELAH DILAKUKAN UPDATE LAST ---" << endl;
+    printList(List);
+
+    updateAfter(List, nodeC);
+    cout << "--- ISI LIST SETELAH DILAKUKAN UPDATE AFTER ---" << endl;
+    printList(List);
+
+    updateByNim(List, "2311102133");
+    cout << "--- ISI LIST SETELAH DILAKUKAN UPDATE BY NIM ---" << endl;
+    printList(List);
+
+    return 0;
+}
+```
+
+Data mahasiswa dimasukkan ke dalam linked list menggunakan insertFirst(), insertLast(), dan insertAfter(). Setelah itu, program menampilkan data mahasiswa beserta jumlah node yang ada. Selanjutnya, fungsi updateFirst(), updateLast(), updateAfter(), dan updateByNim() digunakan untuk mengubah data mahasiswa berdasarkan posisi node atau NIM tertentu.
+
 ## Unguided
 
 ### 1. Implementasi ADT Singly Linked List
 
-Buat ADT singly linked list dengan `infotype` bertipe integer, `address` sebagai pointer ke `ElmList`, serta operasi `CreateList`, alokasi, dealokasi, `printInfo`, dan `insertFirst`. Lalu coba di `main.cpp` dengan memasukkan data 2, 0, 8, 12, dan 9 memakai `insertFirst`.
-
-**SLL.h**
+**`SLL.h`**
 
 ```cpp
 #ifndef SLL_H
 #define SLL_H
-
+ 
 #include <iostream>
 #define Nil NULL
-
+ 
 using namespace std;
-
+ 
 typedef int infotype;
 typedef struct ElmList *address;
-
+ 
 struct ElmList {
     infotype info;
     address next;
 };
-
+ 
 struct List {
     address First;
 };
-
+ 
 void CreateList(List &L);
 address alokasi(infotype x);
 void dealokasi(address &P);
@@ -78,31 +605,35 @@ void printInfo(List L);
 void insertFirst(List &L, address P);
 address findElm(List L, infotype x);
 int totalInfo(List L);
-
+ 
 #endif
 ```
 
-**SLL.cpp**
+**`SLL.cpp`**
 
 ```cpp
 #include "SLL.h"
-
+ 
+// bikin list kosong
 void CreateList(List &L) {
     L.First = Nil;
 }
-
+ 
+// bikin elemen baru
 address alokasi(infotype x) {
     address P = new ElmList;
     P->info = x;
     P->next = Nil;
     return P;
 }
-
+ 
+// hapus elemen dari memori
 void dealokasi(address &P) {
     delete P;
     P = Nil;
 }
-
+ 
+// tampilkan semua info
 void printInfo(List L) {
     address P = L.First;
     if (P == Nil) {
@@ -115,12 +646,14 @@ void printInfo(List L) {
         cout << endl;
     }
 }
-
+ 
+// tambah elemen di awal list
 void insertFirst(List &L, address P) {
     P->next = L.First;
     L.First = P;
 }
-
+ 
+// cari elemen dengan info x
 address findElm(List L, infotype x) {
     address P = L.First;
     while (P != Nil) {
@@ -131,7 +664,8 @@ address findElm(List L, infotype x) {
     }
     return Nil;
 }
-
+ 
+// jumlahkan semua info
 int totalInfo(List L) {
     int total = 0;
     address P = L.First;
@@ -143,102 +677,56 @@ int totalInfo(List L) {
 }
 ```
 
-**main.cpp**
+**`main.cpp`**
 
 ```cpp
 #include "SLL.h"
-
+ 
 int main() {
     List L;
     address P1, P2, P3, P4, P5 = Nil;
-
+ 
     CreateList(L);
-
+ 
     P1 = alokasi(2);
     insertFirst(L, P1);
-
     P2 = alokasi(0);
     insertFirst(L, P2);
-
     P3 = alokasi(8);
     insertFirst(L, P3);
-
     P4 = alokasi(12);
     insertFirst(L, P4);
-
     P5 = alokasi(9);
     insertFirst(L, P5);
-
+ 
     printInfo(L);
     cout << endl;
-
+ 
+    // soal 3: cari elemen 8
     address P = findElm(L, 8);
     if (P != Nil) {
         cout << P->info << " ditemukan dalam list" << endl;
     } else {
         cout << "8 tidak ditemukan dalam list" << endl;
     }
-
     cout << endl;
-    cout << "Total info dari kelima elemen adalah "
-         << totalInfo(L) << endl;
-
+ 
+    // soal 4: total info
+    cout << "Total info dari kelima elemen adalah " << totalInfo(L) << endl;
+ 
     return 0;
 }
 ```
 
 #### Output Unguided 1
 
-![Screenshot Output Unguided 1](Output/SLL.png)
+![Screenshot Output Unguided 1](Output/SL.png)
 
-Program dimulai dengan `CreateList(L)` supaya `First` bernilai `Nil`. Setelah itu node dengan nilai 2, 0, 8, 12, dan 9 dibuat memakai `alokasi()` lalu disisipkan satu per satu dengan `insertFirst()`. Karena selalu masuk di depan, node yang terakhir dimasukkan (9) jadi yang paling depan. Hasilnya adalah `9 12 8 0 2`.
-
-### 2. Mencari Elemen dengan findElm
-
-Cari elemen dengan `info` 8 menggunakan fungsi `findElm(L, x)` yang mengembalikan alamat node jika ditemukan dan `Nil` jika tidak ditemukan.
-
-Fungsi `findElm` sudah ditulis pada `SLL.h` dan `SLL.cpp` di atas. Pemanggilannya pada `main.cpp` adalah sebagai berikut:
-
-```cpp
-address P = findElm(L, 8);
-
-if (P != Nil) {
-    cout << P->info << " ditemukan dalam list" << endl;
-} else {
-    cout << "8 tidak ditemukan dalam list" << endl;
-}
-```
-
-#### Output Unguided 2
-
-![Screenshot Output Unguided 2](Output/SLL2.png)
-
-`findElm` memakai pointer bantu `P` yang mulai dari `First`, lalu memeriksa satu per satu apakah `info` sama dengan nilai yang dicari. Pada list `9 12 8 0 2`, angka 8 ada di node ketiga, sehingga pencarian berhenti setelah memeriksa 9, 12, lalu 8. Hasilnya adalah `8 ditemukan dalam list`.
-
-### 3. Menghitung Total Info Seluruh Elemen
-
-Hitung jumlah total info seluruh elemen, yaitu 9 + 12 + 8 + 0 + 2 = 31.
-
-Fungsi yang digunakan adalah `totalInfo(List L)` yang menelusuri list dari `First` sampai `Nil` dan menambahkan nilai `info` setiap node ke variabel `total`.
-
-Pemanggilannya pada `main.cpp`:
-
-```cpp
-cout << "Total info dari kelima elemen adalah "
-     << totalInfo(L) << endl;
-```
-
-#### Output Unguided 3
-
-![Screenshot Output Unguided 3](Output/SLL3.png)
-
-`totalInfo` menelusuri list dari `First` sampai `Nil` dengan variabel `total` yang dimulai dari 0. Setiap nilai `info` ditambahkan ke total, sehingga perhitungannya adalah 9 + 12 + 8 + 0 + 2 dan hasilnya 31.
+Angka 2, 0, 8, 12, dan 9 dimasukkan ke dalam linked list menggunakan insertFirst(). Karena setiap angka dimasukkan ke bagian awal, urutan datanya menjadi 9, 12, 8, 0, dan 2. Fungsi findElm() digunakan untuk mencari angka 8, sedangkan totalInfo() digunakan untuk menghitung jumlah seluruh data yang menghasilkan nilai 31.
 
 ## Kesimpulan
 
-Dari praktikum ini aku jadi paham kalau ADT singly linked list dipisah menjadi tiga file, yaitu `SLL.h` untuk deklarasi tipe dan prototype, `SLL.cpp` untuk isi fungsinya, dan `main.cpp` untuk mencoba hasilnya. Node dibuat memakai `alokasi()` dengan `new`, kemudian disambungkan ke list lewat pointer `next`, sedangkan `dealokasi()` digunakan untuk mengembalikan memori dengan `delete`.
-
-Hasil `insertFirst()` yang selalu menyisipkan node di depan membuat output menjadi `9 12 8 0 2`, kebalikan dari urutan input. Pada bagian searching, `findElm()` menelusuri list dari `First` sampai data ditemukan atau sampai `Nil`. Sementara itu, `totalInfo()` menjumlahkan seluruh nilai dalam list dan menghasilkan 31. Pencarian dan penjumlahan memiliki kompleksitas O(n) karena harus memeriksa node satu per satu.
+Dari praktikum ini, aku jadi paham cara kerja singly linked list, mulai dari membuat node, menambahkan data dengan insertFirst(), mencari data dengan findElm(), sampai menjumlahkan seluruh data dengan totalInfo(). Karena insertFirst() menambahkan data di awal, urutan output menjadi terbalik dari urutan input. Hasil pencarian angka 8 berhasil ditemukan, sedangkan total seluruh data adalah 31.
 
 ## Referensi
 
