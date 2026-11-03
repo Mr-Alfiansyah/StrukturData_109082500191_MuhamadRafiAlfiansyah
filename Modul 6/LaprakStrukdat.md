@@ -637,7 +637,7 @@ int main()
 }
 ```
 
-TULIS KESIMPULAN
+Membuat linked list kosong, kemudian mengalokasikan lima node berisi data makanan. Setiap node dimasukkan ke posisi yang sudah ditentukan. Setelah itu, program menjalankan proses update dan pencarian data, lalu menghapus beberapa node sebelum menampilkan isi akhir linked list.
 
 ## Unguided
 
@@ -851,11 +851,11 @@ int main() {
 
 ![Screenshot Output Unguided 1](Output/DLL.png)
 
-Angka 2, 0, 8, 12, dan 9 dimasukkan ke dalam linked list menggunakan insertFirst(). Karena setiap angka dimasukkan ke bagian awal, urutan datanya menjadi 9, 12, 8, 0, dan 2. Fungsi findElm() digunakan untuk mencari angka 8, sedangkan totalInfo() digunakan untuk menghitung jumlah seluruh data yang menghasilkan nilai 31.
+data kendaraan disimpan berdasarkan urutan input dengan memastikan setiap nomor polisi berbeda. Selanjutnya, pengguna dapat melihat seluruh data, mencari kendaraan tertentu melalui nomor polisinya, dan menghapus data kendaraan yang dipilih. Proses penghapusan disesuaikan dengan posisi node dalam linked list, baik di awal, akhir, maupun tengah.
 
 ## Kesimpulan
 
-Dari praktikum ini, aku jadi paham cara kerja singly linked list, mulai dari membuat node, menambahkan data dengan insertFirst(), mencari data dengan findElm(), sampai menjumlahkan seluruh data dengan totalInfo(). Karena insertFirst() menambahkan data di awal, urutan output menjadi terbalik dari urutan input. Hasil pencarian angka 8 berhasil ditemukan, sedangkan total seluruh data adalah 31.
+Dari praktikum ini, saya jadi lebih memahami cara kerja Doubly Linked List dan bagaimana struktur data ini digunakan untuk menyimpan serta mengelola data. Saya belajar cara menambahkan data, menampilkan, mengubah, mencari, dan menghapus node sesuai posisinya. Selain itu, saya juga memahami fungsi pointer next dan prev yang menghubungkan setiap node, serta penggunaan alokasi dan dealokasi memori. Melalui praktikum ini, saya dapat lebih memahami penerapan Doubly Linked List dalam program C++.
 
 ## Referensi
 
