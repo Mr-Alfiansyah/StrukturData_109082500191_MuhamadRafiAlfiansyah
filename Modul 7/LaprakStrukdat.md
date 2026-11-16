@@ -17,90 +17,261 @@ Pada praktikum ini stack dibuat dengan ADT berbasis array. Stack disusun dari ar
 Selain push dan pop, ada beberapa operasi lain. printInfo menampilkan isi stack dari top ke bawah, jadi urutan tampilnya kebalikan dari urutan masuk. balikStack membalik isi stack dengan menukar elemen paling bawah dan paling atas, bergerak ke tengah sampai selesai. pushAscending menyisipkan data sambil menjaga stack tetap terurut naik dari bawah ke atas, caranya dengan menggeser elemen yang lebih besar dari data baru ke atas dulu. Terakhir, getInputStream membaca input user per karakter memakai cin.get() dan langsung mem-push setiap karakternya sampai user menekan enter.
 
 
-## Guided
+## Guided 1
 
-### 1. Implementasi Linked List Mahasiswa
+### 1. Stack
 
-**`listMakanan.h`**
+**`stack.h`**
 
 ```cpp
-#ifndef LISTMAKANAN_H
-#define LISTMAKANAN_H
+#ifndef STACK_TABLE
+#define STACK_TABLE
+#include <iostream>
+using namespace std;
+const int MAX = 10;
+
+struct stackTable
+{
+    int data[MAX];
+    int top;
+};
+bool isEmpty(stackTable s);
+bool isFull(stackTable s);
+void createStack(stackTable &s);
+void push(stackTable &s, int angka);
+void pop(stackTable &s); 
+void update(stackTable &s, int posisi);
+void view(stackTable s);
+void searchData(stackTable s, int data);
+#endif
+```
+
+**`stack.cpp`**
+
+```cpp
+
+#include "stack.h"
+#include <iostream>
+using namespace std;
+
+bool isEmpty(stackTable s)
+{
+    return s.top == -1;
+}
+bool isFull(stackTable s)
+{
+    return s.top == MAX - 1;
+}
+void createStack(stackTable &s)
+{
+    s.top = -1;
+}
+void push(stackTable &s, int angka)
+{
+
+    if (isFull(s))
+    {
+        cout << "Stack penuh!" << endl;
+    }
+    else
+    {
+        s.top++;
+        s.data[s.top] = angka;
+        cout << "Data" << angka << "berhasil ditambahkan kedalam stack !" << endl;
+    }
+}
+
+void pop(stackTable &s)
+{
+    if (isEmpty(s))
+    {
+        cout << "Stack kosong!" << endl;
+    }
+    else
+    {
+        int val = s.data[s.top];
+        s.top--;
+        cout << "Data" << val << " berhasil dihapus dari stack!" << endl;
+    }
+}
+
+void update(stackTable &s, int posisi)
+{
+    if (isEmpty(s))
+    {
+        cout << "Stack kosong!" << endl;
+    }
+    if (posisi <= 0)
+    {
+        cout << "Posisi tidak valid!" << endl;
+        return;
+    }
+    // index = top
+
+    int idx = s.top - (posisi - 1);
+    if (idx < 0 || idx > s.top)
+    {
+        cout << "Posisi " << posisi << " tidak valid!" << endl;
+        return;
+    }
+
+    cout << "Update data posisi ke-" << posisi << endl;
+    cout << "Masukkan angka : ";
+    cin >> s.data[idx];
+    cout << "Data berhasil diupdate!" << endl;
+    cout << endl;
+}
+
+void view(stackTable s)
+{
+    if (isEmpty(s))
+    {
+        cout << "Stack kosong!" << endl;
+    }
+    else
+    {
+        for (int i = s.top; i >= 0; --i)
+        {
+            cout << s.data[i] << " ";
+        }
+    }
+    cout << endl;
+}
+
+void searchData(stackTable s, int data)
+{
+    if (isEmpty(s))
+    {
+        cout << "Stack kosong!" << endl;
+        return;
+    }
+
+    cout << "Mencari data " << data << "..." << endl;
+    int posisi = 1;
+    bool found = false;
+
+    for (int i = s.top; i >= 0; --i)
+    {
+        if (s.data[i] == data)
+        {
+            cout << "Data " << data << " ditemukan pada posisi ke-" << posisi << endl;
+            cout << endl;
+            found = true;
+            break;
+        }
+        posisi++;
+    }
+
+    if (!found)
+    {
+        cout << "Data " << data << " tidak ditemukan didalam stack!" << endl;
+        cout << endl;
+    }
+}
+
+```
+
+**`main.cpp`**
+
+```cpp
+#include "stack.h"
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    stackTable s;
+    createStack(s);
+
+    push(s, 1);
+    push(s, 2);
+    push(s, 3);
+    push(s, 4);
+    push(s, 5);
+    cout << endl;
+
+    cout << "--- Stack setelah push ---" << endl;
+    view(s);
+    cout << endl;
+
+    pop(s);
+    pop(s);
+    cout << endl;
+
+    cout << "--- Stack setelah pop 2 kali ---" << endl;
+    view(s);
+    cout << endl;
+
+    update(s, 2);
+    update(s, 1);
+    cout << endl;
+
+    cout << "--- Stack setelah update ---" << endl;
+    view(s);
+    cout << endl;
+
+    searchData(s, 4);
+    searchData(s, 9);
+
+    return 0;
+}
+```
+
+Membuat stack dengan representasi array berukuran maksimal 10, dengan top sebagai penanda elemen paling atas dan nilai -1 yang berarti stack masih kosong. Stack dibuat dulu lewat createStack, lalu diisi angka 1 sampai 5 menggunakan push dan ditampilkan dengan view dari top ke bawah. Setelah itu dilakukan pop dua kali sehingga dua data teratas terhapus, kemudian update dipakai untuk mengubah data berdasarkan posisinya yang dihitung dari top, yaitu posisi ke-2 dan ke-1 dengan nilai baru yang diinput user. Terakhir, searchData mencari angka 4 dan 9, lalu menampilkan posisinya kalau ketemu atau pesan tidak ditemukan kalau tidak ada. Setiap operasi dicek dulu dengan isEmpty dan isFull supaya tidak terjadi underflow maupun overflow.
+
+## Guided 2
+
+### 2. Stack
+
+**`stack.h`**
+
+```cpp
+#ifndef STACK
+#define STACK
 #define Nil NULL
 
 #include <iostream>
 using namespace std;
-
-struct makanan
-{
-    string nama;
-    string jenis;
-    float harga;
-    float rating;
-};
-
-typedef makanan dataMakanan;
+const int MAX = 10;
 
 typedef struct node *address;
 
 struct node
 {
-    dataMakanan isidata;
+    int dataAngka;
     address next;
-    address prev;
 };
 
-struct linkedlist
+struct stack
 {
-    address first;
-    address last;
+    address top;
 };
 
-bool isEmpty(linkedlist List);
-void createList(linkedlist &List);
-address alokasi(string nama, string jenis, float harga, float rating);
-void dealokasi(address &node);
+bool isEmpty(stack listStack);
+void createStack(stack &listStack);
+address alokasi(int angka);
+void dealokasi(addresss &node);
 
-void insertFirst(linkedlist &List, address nodeBaru);
-void insertLast(linkedlist &List, address nodeBaru);
-void insertAfter(linkedlist &List, address nodeBaru, address Prev);
-void insertBefore(linkedlist &List, address nodeBaru, address nodeNext);
-
-void printList(linkedlist List);
-
-void updateFirst(linkedlist List);
-void updateLast(linkedlist List);
-void updateAfter(linkedlist List, address prev);
-void updateBefore(linkedlist List, address nodeNext);
-
-// Searching
-void findByName(linkedlist List, string nama);
-void findByJenis(linkedlist List, string jenis);
-void findByMinRating(linkedlist List, float minRating);
-
-// Delete
-void deleteFirst(linkedlist &List);
-void deleteLast(linkedlist &List);
-void deleteAfter(linkedlist &List, address Prev);
-void deleteBefore(linkedlist &List, address nodeNext);
-
-void deleteNode(linkedlist &List, address target);
-void deleteByName(linkedlist &List, string nama);
-
+void push(stack &listStack, address nodeBaru);
+void pop(stack &listStack); 
+void update(stack &listStack, int posisi);
+void view(stack &listStack);
+void searchData(stack listStack, int data);
 #endif
 ```
 
-**`listMakanan.cpp`**
+**`stack.cpp`**
 
 ```cpp
-#include "listMakanan.h"
+#include "stack.h"
 #include <iostream>
-#include <string>
+
 using namespace std;
 
-bool isEmpty(linkedlist List)
+bool isEmpty(stack listStack)
 {
-    if (List.first == Nil)
+    if (listStack.top == Nil)
     {
         return true;
     }
@@ -110,535 +281,201 @@ bool isEmpty(linkedlist List)
     }
 }
 
-void createList(linkedlist &List)
+void createStack(stack &listStack)
 {
-    List.first = Nil;
-    List.last = Nil;
+    listStack.top = Nil;
 }
 
-// pembuatan node baru dengan menerapkan manajemen memori
-address alokasi(string nama, string jenis, float harga, float rating)
+address alokasi(int angka)
 {
     address nodeBaru = new node;
-    nodeBaru->isidata.nama = nama;
-    nodeBaru->isidata.jenis = jenis;
-    nodeBaru->isidata.harga = harga;
-    nodeBaru->isidata.rating = rating;
+    nodeBaru->dataAngka = angka;
     nodeBaru->next = Nil;
-    nodeBaru->prev = Nil;
     return nodeBaru;
 }
 
 void dealokasi(address &node)
 {
     node->next = Nil;
-    node->prev = Nil;
     delete node;
 }
 
-void insertFirst(linkedlist &List, address nodeBaru)
+void push(stack &listStack, address nodeBaru)
 {
-    if (isEmpty(List))
-    {
-        List.first = List.last = nodeBaru;
-    }
-    else
-    {
-        nodeBaru->next = List.first;
-        List.first->prev = nodeBaru;
-        List.first = nodeBaru;
-    }
-    cout << "Node " << nodeBaru->isidata.nama << " berhasil ditambahkan sebagai node pertama list" << endl;
+    nodeBaru->next = listStack.top;
+    listStack.top = nodeBaru;
+    cout << "Node " << nodeBaru->dataAngka << " berhasil ditambahkan kedalam stack!" << endl;
 }
 
-void insertLast(linkedlist &List, address nodeBaru)
+void pop(stack &listStack)
 {
-    if (isEmpty(List) == true)
+    address nodeHapus;
+    if (isEmpty(listStack) == true)
     {
-        List.first = List.last = nodeBaru;
+        cout << "Stack kosong!" << endl;
     }
     else
     {
-        nodeBaru->prev = List.last;
-        List.last->next = nodeBaru;
-        List.last = nodeBaru;
+        nodeHapus = listStack.top;
+        listStack.top = listStack.top->next;
+        nodeHapus->next = Nil;
+        dealokasi(nodeHapus);
+        cout << "node " << nodeHapus->dataAngka << " berhasil dihapus dari stack!" << endl;
     }
-    cout << "Node " << nodeBaru->isidata.nama << " berhasil ditambahkan sebagai node terakhir list" << endl;
 }
 
-void insertAfter(linkedlist &List, address nodeBaru, address nodePrev)
+void update(stack &listStack, int posisi)
 {
-    if (isEmpty(List) == true)
+    if (isEmpty(listStack) == true)
     {
-        List.first = List.last = nodeBaru;
+        cout << "Stack kosong!" << endl;
     }
     else
     {
-        if (nodePrev != Nil)
+        if (posisi == 0)
         {
-            if (nodePrev == List.last)
-            {
-                insertLast(List, nodeBaru);
-            }
-            else
-            {
-                nodeBaru->next = nodePrev->next;
-                nodeBaru->prev = nodePrev;
-                (nodePrev->next)->prev = nodeBaru;
-                nodePrev->next = nodeBaru;
-                cout << "Node " << nodeBaru->isidata.nama << " berhasil ditambahkan setelah node " << nodePrev->isidata.nama << endl;
-            }
+            cout << "Posisi tidak valid!" << endl;
         }
         else
         {
-            cout << "node sebelumnya (nodePrev) tidak valid!" << endl;
+            address nodeBantu = listStack.top;
+            int count = 1;
+            bool found = false;
+            while (nodeBantu != Nil)
+            {
+                if (count < posisi)
+                {
+                    nodeBantu = nodeBantu->next;
+                    count++;
+                }
+                else if (count == posisi)
+                {
+                    cout << "Update node poisisi ke-" << posisi << endl;
+                    cout << "Masukkan angka : ";
+                    cin >> nodeBantu->dataAngka;
+                    cout << "Data berhasil diupdate!" << endl;
+                    cout << endl;
+                    found = true;
+                    break;
+                }
+            }
+            if (found == false)
+            {
+                cout << "Posisi " << posisi << " tidak valid!" << endl;
+            }
         }
     }
 }
 
-void insertBefore(linkedlist &List, address nodeBaru, address nodeNext)
+void view(stack listStack)
 {
-    if (isEmpty(List) == true)
-    {
-        List.first = List.last = nodeBaru;
-    }
-    else
-    {
-        if (nodeNext != Nil)
-        {
-            if (nodeNext == List.first)
-            {
-                insertFirst(List, nodeBaru);
-            }
-            else
-            {
-                nodeBaru->next = nodeNext;
-                nodeBaru->prev = nodeNext->prev;
-                (nodeNext->prev)->next = nodeBaru;
-                nodeNext->prev = nodeBaru;
-                cout << "Node " << nodeBaru->isidata.nama << " berhasil ditambahkan sebelum node " << nodeNext->isidata.nama << endl;
-            }
-        }
-        else
-        {
-            cout << "node setelahnya (nodeNext) tidak valid!" << endl;
-        }
-    }
-}
-
-void printList(linkedlist List)
-{
-    if (isEmpty(List) == true)
+    if (isEmpty(listStack) == true)
     {
         cout << "List kosong!" << endl;
     }
     else
     {
-        address nodeBantu = List.first;
+        address nodeBantu = listStack.top;
         while (nodeBantu != Nil)
         {
-            cout << "Nama makanan : " << nodeBantu->isidata.nama << endl;
-            cout << "Jenis        : " << nodeBantu->isidata.jenis << endl;
-            cout << "Harga        : " << nodeBantu->isidata.harga << endl;
-            cout << "Rating       : " << nodeBantu->isidata.rating << endl;
-            cout << "-------------------------------" << endl;
+            cout << nodeBantu->dataAngka << " ";
             nodeBantu = nodeBantu->next;
         }
     }
+    cout << endl;
 }
 
-void updateFirst(linkedlist List)
+void searchData(stack listStack, int data)
 {
-    if (isEmpty(List) == true)
+    if (isEmpty(listStack) == true)
     {
         cout << "List kosong!" << endl;
     }
     else
     {
-        cout << "Masukkan update data node pertama : " << endl;
-        cout << "Nama makanan : ";
-        getline(cin, List.first->isidata.nama);
-        cout << "Jenis makanan : ";
-        getline(cin, List.first->isidata.jenis);
-        cout << "Harga : ";
-        cin >> List.first->isidata.harga;
-        cout << "Rating : ";
-        cin >> List.first->isidata.rating;
-        cin.ignore(); // menghapus karakter newline (/n) dari input buffer
-        cout << "Data Berhasil Diupdate!" << endl;
-        cout << endl;
-    }
-}
-
-void updateLast(linkedlist List)
-{
-    if (isEmpty(List) == true)
-    {
-        cout << "List kosong!" << endl;
-    }
-    else
-    {
-        cout << "Masukkan update data node terakhir : " << endl;
-        cout << "Nama makanan : ";
-        getline(cin, List.last->isidata.nama);
-        cout << "Jenis makanan : ";
-        getline(cin, List.last->isidata.jenis);
-        cout << "Harga : ";
-        cin >> List.last->isidata.harga;
-        cout << "Rating : ";
-        cin >> List.last->isidata.rating;
-        cin.ignore(); // menghapus karakter newline (/n) dari input buffer
-        cout << "Data Berhasil Diupdate!" << endl;
-        cout << endl;
-    }
-}
-
-void updateAfter(linkedlist List, address nodePrev)
-{
-    if (isEmpty(List) == true)
-    {
-        cout << "List kosong!" << endl;
-    }
-    else
-    {
-        if (nodePrev != Nil && nodePrev->next != Nil)
+        address nodeBantu = listStack.top;
+        int posisi = 1;
+        bool found = false;
+        cout << "Mencari data " << data << "..." << endl;
+        while (nodeBantu != Nil)
         {
-            address nodeBantu = nodePrev->next;
-            cout << "masukkan update data node setelah node " << nodePrev->isidata.nama << " : " << endl;
-            cout << "Nama makanan : ";
-            getline(cin, nodeBantu->isidata.nama);
-            cout << "Jenis makanan : ";
-            getline(cin, nodeBantu->isidata.jenis);
-            cout << "Harga : ";
-            cin >> nodeBantu->isidata.harga;
-            cout << "Rating : ";
-            cin >> nodeBantu->isidata.rating;
-            cin.ignore(); // menghapus karakter newline (/n) dari input buffer
-            cout << "Data Berhasil Diupdate!" << endl;
+            if (nodeBantu->dataAngka == data)
+            {
+                cout << "Data " << data << " ditemukan pada posisi ke-" << posisi << endl;
+                found = true;
+                cout << endl;
+                break;
+            }
+            else
+            {
+                posisi++;
+                nodeBantu = nodeBantu->next;
+            }
+        }
+        if (found == false)
+        {
+            cout << "Data " << data << " tidak ditemukan didalam stack!" << endl;
             cout << endl;
         }
-        else
-        {
-            cout << "Node sebelumnya (nodePrev) tidak valid!" << endl;
-        }
     }
-}
-
-void updateBefore(linkedlist List, address nodeNext)
-{
-    if (isEmpty(List) == true)
-    {
-        cout << "List kosong!" << endl;
-    }
-    else
-    {
-        if (nodeNext != Nil && nodeNext->prev != Nil)
-        {
-            address nodeBantu = nodeNext->prev;
-            cout << "masukkan update data node sebelum node " << nodeNext->isidata.nama << " : " << endl;
-            cout << "Nama makanan : ";
-            getline(cin, nodeBantu->isidata.nama);
-            cout << "Jenis makanan : ";
-            getline(cin, nodeBantu->isidata.jenis);
-            cout << "Harga : ";
-            cin >> nodeBantu->isidata.harga;
-            cout << "Rating : ";
-            cin >> nodeBantu->isidata.rating;
-            cin.ignore(); // menghapus karakter newline (/n) dari input buffer
-            cout << "Data Berhasil Diupdate!" << endl;
-            cout << endl;
-        }
-        else
-        {
-            cout << "Node sebelumnya (prev) tidak valid!" << endl;
-        }
-    }
-}
-
-// SEARCHING
-void findByName(linkedlist List, string nama)
-{
-    if (isEmpty(List))
-    {
-        cout << "List kosong!" << endl;
-        return;
-    }
-    address p = List.first;
-    while (p != Nil)
-    {
-        if (p->isidata.nama == nama)
-        {
-            cout << "Ditemukan (berdasarkan nama):" << endl;
-            cout << "Nama makanan : " << p->isidata.nama << endl;
-            cout << "Jenis        : " << p->isidata.jenis << endl;
-            cout << "Harga        : " << p->isidata.harga << endl;
-            cout << "Rating       : " << p->isidata.rating << endl;
-            return;
-        }
-        p = p->next;
-    }
-    cout << "Data dengan nama \"" << nama << "\" tidak ditemukan." << endl;
-}
-
-void findByJenis(linkedlist List, string jenis)
-{
-    if (isEmpty(List))
-    {
-        cout << "List kosong!" << endl;
-        return;
-    }
-    address p = List.last;
-    while (p != Nil)
-    {
-        if (p->isidata.jenis == jenis)
-        {
-            cout << "Ditemukan (berdasarkan jenis):" << endl;
-            cout << "Nama makanan : " << p->isidata.nama << endl;
-            cout << "Jenis        : " << p->isidata.jenis << endl;
-            cout << "Harga        : " << p->isidata.harga << endl;
-            cout << "Rating       : " << p->isidata.rating << endl;
-            return;
-        }
-        p = p->prev;
-    }
-    cout << "Data dengan jenis \"" << jenis << "\" tidak ditemukan." << endl;
-}
-
-void findByMinRating(linkedlist List, float minRating)
-{
-    if (isEmpty(List))
-    {
-        cout << "List kosong!" << endl;
-        return;
-    }
-    address p = List.last;
-    while (p != Nil)
-    {
-        if (p->isidata.rating >= minRating)
-        {
-            cout << "Ditemukan (rating >= " << minRating << "):" << endl;
-            cout << "Nama makanan : " << p->isidata.nama << endl;
-            cout << "Jenis        : " << p->isidata.jenis << endl;
-            cout << "Harga        : " << p->isidata.harga << endl;
-            cout << "Rating       : " << p->isidata.rating << endl;
-            return;
-        }
-        p = p->prev;
-    }
-    cout << "Tidak ada data dengan rating >= " << minRating << "." << endl;
-}
-
-// DELETE
-void deleteFirst(linkedlist &List)
-{
-    if (isEmpty(List) == true)
-    {
-        cout << "List kosong! Tidak ada node yang dihapus." << endl;
-        return;
-    }
-    address pDel = List.first;
-    if (List.first == List.last)
-    {
-        List.first = List.last = Nil;
-    }
-    else
-    {
-        List.first = pDel->next;
-        List.first->prev = Nil;
-        pDel->next = Nil;
-    }
-    pDel->prev = Nil;
-    cout << "Node " << pDel->isidata.nama << " berhasil dihapus dari posisi pertama." << endl;
-    dealokasi(pDel);
-}
-
-void deleteLast(linkedlist &List)
-{
-    if (isEmpty(List) == true)
-    {
-        cout << "List kosong! Tidak ada node yang dihapus." << endl;
-        return;
-    }
-    address pDel = List.last;
-    if (List.first == List.last)
-    {
-        List.first = List.last = Nil;
-    }
-    else
-    {
-        List.last = pDel->prev;
-        List.last->next = Nil;
-        pDel->prev = Nil;
-    }
-    pDel->next = Nil;
-    cout << "Node " << pDel->isidata.nama << " berhasil dihapus dari posisi terakhir." << endl;
-    dealokasi(pDel);
-}
-
-void deleteAfter(linkedlist &List, address Prev)
-{
-    if (isEmpty(List) == true)
-    {
-        cout << "List kosong! Tidak ada node yang dihapus." << endl;
-        return;
-    }
-    if (Prev == Nil || Prev->next == Nil)
-    {
-        cout << "Node sebelumnya (Prev) tidak valid atau tidak ada node setelahnya!" << endl;
-        return;
-    }
-    if (Prev->next == List.last)
-    {
-        deleteLast(List);
-        return;
-    }
-    address pDel = Prev->next;
-    Prev->next = pDel->next;
-    pDel->next->prev = Prev;
-    pDel->prev = Nil;
-    pDel->next = Nil;
-    cout << "Node " << pDel->isidata.nama << " berhasil dihapus setelah node " << Prev->isidata.nama << "." << endl;
-    dealokasi(pDel);
-}
-
-void deleteBefore(linkedlist &List, address nodeNext)
-{
-    if (isEmpty(List) == true)
-    {
-        cout << "List kosong! Tidak ada node yang dihapus." << endl;
-        return;
-    }
-    if (nodeNext == Nil || nodeNext->prev == Nil)
-    {
-        cout << "Node setelahnya (nodeNext) tidak valid atau tidak ada node sebelumnya!" << endl;
-        return;
-    }
-    if (nodeNext->prev == List.first)
-    {
-        deleteFirst(List);
-        return;
-    }
-    address pDel = nodeNext->prev;
-    nodeNext->prev = pDel->prev;
-    pDel->prev->next = nodeNext;
-    pDel->next = Nil;
-    pDel->prev = Nil;
-    cout << "Node " << pDel->isidata.nama << " berhasil dihapus sebelum node " << nodeNext->isidata.nama << "." << endl;
-    dealokasi(pDel);
-}
-
-void deleteNode(linkedlist &List, address target)
-{
-    if (isEmpty(List) == true || target == Nil)
-    {
-        cout << "Target tidak valid atau list kosong!" << endl;
-        return;
-    }
-    if (target == List.first)
-    {
-        deleteFirst(List);
-    }
-    else if (target == List.last)
-    {
-        deleteLast(List);
-    }
-    else
-    {
-        address L = target->prev;
-        address R = target->next;
-        L->next = R;
-        R->prev = L;
-        target->next = Nil;
-        target->prev = Nil;
-        cout << "Node " << target->isidata.nama << " berhasil dihapus dari tengah list." << endl;
-        dealokasi(target);
-    }
-}
-
-void deleteByName(linkedlist &List, string nama)
-{
-    if (isEmpty(List))
-    {
-        cout << "List kosong! Tidak ada node yang dihapus." << endl;
-        return;
-    }
-
-    address target = List.first;
-    while (target != Nil && target->isidata.nama != nama)
-    {
-        target = target->next;
-    }
-    if (target == Nil)
-    {
-        cout << "Node dengan nama \"" << nama << "\" tidak ditemukan." << endl;
-        return;
-    }
-
-    deleteNode(List, target);
-    cout << "Node dengan nama \"" << nama << "\" telah dihapus dan didealokasi." << endl;
 }
 ```
 
 **`main.cpp`**
 
 ```cpp
-#include "listMakanan.h"
+#include "stack.h"
 #include <iostream>
 
 using namespace std;
 
 int main()
 {
-    linkedlist List;
+    stack listStack;
     address nodeA, nodeB, nodeC, nodeD, nodeE = Nil;
-    createList(List);
+    createStack(listStack);
 
-    dataMakanan dtMakanan;
+    nodeA = alokasi(1);
+    nodeB = alokasi(2);
+    nodeC = alokasi(3);
+    nodeD = alokasi(4);
+    nodeE = alokasi(5);
 
-    nodeA = alokasi("Nasi Rames", "Makanan Berat", 10000, 8.5);
-    nodeB = alokasi("Ayam Geprek", "Makanan Berat", 13000, 9.0);
-    nodeC = alokasi("Risol Mayo", "Makanan Ringan", 3500, 8.8);
-    nodeD = alokasi("Mie Ayam", "Makanan Berat", 15000, 9.9);
-    nodeE = alokasi("Donat", "Makanan Ringan", 2000, 7.7);
-
-    insertFirst(List, nodeD);
-    insertLast(List, nodeE);
-    insertAfter(List, nodeA, nodeD);
-    insertBefore(List, nodeC, nodeE);
-    insertLast(List, nodeB);
+    push(listStack, nodeA);
+    push(listStack, nodeB);
+    push(listStack, nodeC);
+    push(listStack, nodeD);
+    push(listStack, nodeE);
     cout << endl;
 
-    // D - A - C - E - B
-    cout << "--- Isi List Setelah Insert ---" << endl;
-    printList(List);
+    cout << "--- Stack setelah push ---" << endl;
+    view(listStack);
     cout << endl;
 
-    updateFirst(List);
-    updateLast(List);
-    updateBefore(List, nodeC);
-    updateAfter(List, nodeA);
-
-    cout << "--- Isi List Setelah Update ---" << endl;
-    printList(List);
-
+    pop(listStack);
+    pop(listStack);
     cout << endl;
 
-    findByName(List, "Nasgor");
-    findByMinRating(List, 9.0);
+    cout << "--- Stack setelah pop 2 kali ---" << endl;
+    view(listStack);
+    cout << endl;
 
-    deleteByName(List, "Nasgor");
-    deleteFirst(List);
-    deleteBefore(List, nodeE);
+    update(listStack, 2);
+    update(listStack, 1);
+    update(listStack, 4);
+    cout << endl;
 
-    cout << endl
-         << "--- Isi List Setelah Delete ---" << endl;
-    printList(List);
+    cout << "--- Stack setelah update ---" << endl;
+    view(listStack);
+    cout << endl;
+
+    searchData(listStack, 4);
+    searchData(listStack, 9);
 
     return 0;
 }
 ```
-
-Membuat linked list kosong, kemudian mengalokasikan lima node berisi data makanan. Setiap node dimasukkan ke posisi yang sudah ditentukan. Setelah itu, program menjalankan proses update dan pencarian data, lalu menghapus beberapa node sebelum menampilkan isi akhir linked list.
+Membuat stack dengan representasi linked list, jadi setiap data disimpan dalam node yang punya dataAngka dan pointer next, sedangkan top menunjuk node paling atas dan bernilai Nil kalau stack kosong. Node dibuat dulu dengan alokasi, lalu dimasukkan lewat push yang menaruh node baru di atas top, sehingga pada main angka 1 sampai 5 masuk berurutan dan isinya ditampilkan dari 5 ke 1 oleh view. Operasi pop menghapus node paling atas dengan memindahkan top ke node berikutnya lalu melepas memorinya dengan dealokasi, dan dilakukan dua kali sehingga tersisa tiga node. Setelah itu update mengubah data berdasarkan posisi yang dihitung dari top dengan menelusuri pointer next, dan posisi ke-4 dinyatakan tidak valid karena node yang tersisa hanya tiga. Terakhir, searchData menelusuri node dari top untuk mencari angka 4 dan 9, lalu menampilkan posisinya kalau ketemu atau pesan tidak ditemukan kalau tidak ada.
 
 ## Unguided
 
