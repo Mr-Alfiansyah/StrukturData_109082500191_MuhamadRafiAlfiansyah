@@ -4,18 +4,33 @@
 
 ## Dasar Teori
 
-### A. Stack
+### A. Queue
 
-Stack adalah struktur data linear yang menerapkan prinsip LIFO (Last In First Out), artinya data yang terakhir masuk akan jadi yang pertama keluar. Gampangnya seperti tumpukan piring, kita cuma bisa menaruh piring baru di paling atas dan mengambil juga dari paling atas. Karena itu semua operasi pada stack hanya terjadi di satu ujung, yang disebut top. Kalau mau mengambil data yang ada di bawah, data di atasnya harus dikeluarkan dulu.
+Queue adalah struktur data linear yang menerapkan prinsip FIFO (First In First Out), artinya data yang pertama masuk akan jadi yang pertama keluar. Gampangnya seperti antrean di loket tiket kereta api: orang yang datang duluan dilayani duluan, dan yang datang paling akhir dilayani paling akhir. Beda dengan stack yang cuma punya satu ujung, queue punya dua ujung. Ujung depan disebut head, tempat elemen diambil, dan ujung belakang disebut tail, tempat elemen baru ditambahkan.
 
-### B. Stack dengan Array
+### B. Operasi Dasar Queue
 
-Pada praktikum ini stack dibuat dengan ADT berbasis array. Stack disusun dari array info yang berisi maksimal 20 elemen dan variabel top yang menandai posisi elemen paling atas. Saat stack baru dibuat (createStack), top bernilai 0 yang berarti stack kosong. Operasi push menambah nilai top lebih dulu, baru data disimpan di info[top], sedangkan pop mengambil data di info[top] lalu mengurangi nilai top. Kalau stack sudah penuh lalu di-push terjadi overflow, dan kalau stack kosong lalu di-pop terjadi underflow. Keduanya perlu dicek. Kelebihannya implementasinya simpel dan hemat memori karena tidak butuh pointer, kekurangannya ukuran stack tetap sehingga tidak bisa bertambah saat program berjalan. Operasi push dan pop sama-sama O(1).
+Ada dua operasi utama pada queue. Yang pertama enqueue (insert), yaitu menyisipkan elemen baru di bagian tail. Yang kedua dequeue (delete), yaitu mengambil dan menghapus elemen di bagian head. Selain itu ada operasi pendukung seperti createQueue untuk membuat queue kosong, isEmpty untuk mengecek apakah queue kosong, isFull untuk mengecek apakah queue penuh (khusus representasi tabel), dan printInfo untuk menampilkan isi queue. Karena penyisipan dan penghapusan terjadi di ujung yang berbeda, kita harus selalu menjaga head dan tail tetap benar setelah setiap operasi, termasuk saat queue berubah dari kosong ke satu elemen atau sebaliknya.
 
-### C. Operasi pada Latihan
+### C. Queue dengan Linked List
 
-Selain push dan pop, ada beberapa operasi lain. printInfo menampilkan isi stack dari top ke bawah, jadi urutan tampilnya kebalikan dari urutan masuk. balikStack membalik isi stack dengan menukar elemen paling bawah dan paling atas, bergerak ke tengah sampai selesai. pushAscending menyisipkan data sambil menjaga stack tetap terurut naik dari bawah ke atas, caranya dengan menggeser elemen yang lebih besar dari data baru ke atas dulu. Terakhir, getInputStream membaca input user per karakter memakai cin.get() dan langsung mem-push setiap karakternya sampai user menekan enter.
+Pada representasi pointer, queue dibuat dari linked list yang punya dua penunjuk, head dan tail. Queue dianggap kosong kalau head bernilai Nil. Saat enqueue, elemen baru dialokasikan dulu, lalu next dari tail lama diarahkan ke elemen baru, kemudian tail dipindahkan ke elemen itu. Saat dequeue, head dipindahkan ke elemen berikutnya, lalu elemen lama dilepas dengan mengisi next-nya dengan Nil. Kelebihannya jumlah antrean tidak terbatas karena memorinya dialokasikan sesuai kebutuhan. Kekurangannya kita harus mengelola memori sendiri lewat alokasi dan dealokasi.
 
+### D. Queue dengan Tabel (Array)
+
+Pada representasi tabel, queue disimpan dalam array dengan ukuran tetap, sehingga jumlah antrean terbatas, tapi tidak perlu manajemen memori. Di modul ini ada tiga alternatif cara mengelola head dan tail:
+
+1. **Alternatif 1 (head diam, tail bergerak).** Head selalu berada di indeks awal selama queue tidak kosong. Enqueue cukup memajukan tail. Dequeue mengambil elemen head, lalu semua elemen sesudahnya digeser maju satu langkah dan tail mundur. Cara ini mirip orang yang maju satu per satu di antrean sungguhan, tapi kurang efisien karena ada proses pergeseran di setiap dequeue.
+
+2. **Alternatif 2 (head bergerak, tail bergerak).** Saat dequeue, head yang maju, jadi tidak ada pergeseran elemen dan lebih efisien. Masalahnya, bisa muncul kondisi penuh semu, yaitu tail sudah di indeks maksimum padahal bagian depan array masih kosong. Kalau itu terjadi, elemen harus digeser dulu supaya ada ruang, dan pergeseran ini hanya dilakukan kalau tail sudah mencapai indeks maksimum.
+
+3. **Alternatif 3 (head dan tail berputar).** Head dan tail bergerak melingkar di sepanjang array. Kalau tail sudah di indeks maksimum, penerusnya kembali ke indeks awal selama masih ada tempat kosong. Cara ini disebut circular buffer, dan paling efisien karena tidak perlu pergeseran sama sekali, sekaligus menghilangkan masalah penuh semu.
+
+Ketiganya punya aturan yang sama untuk kondisi khusus. Queue kosong ditandai dengan head dan tail bernilai -1 (pada latihan), dan saat dequeue terakhir menghabiskan elemen, head dan tail dikembalikan ke kondisi kosong.
+
+### E. Operasi pada Latihan
+
+Latihan memakai ADT Queue berbasis array dengan 5 elemen bertipe integer dan variabel head serta tail. Operasinya meliputi createQueue untuk membuat queue kosong dengan head dan tail bernilai -1, isEmptyQueue dan isFullQueue untuk mengecek kondisi queue, enqueue untuk menambah elemen di tail, dequeue untuk mengambil elemen di head dan mengembalikan nilainya, serta printInfo untuk menampilkan posisi head, tail, dan isi queue dari depan ke belakang (atau tulisan "empty queue" kalau kosong). Ketiga alternatif diimplementasikan pada file queue.cpp dengan file queue.h dan program utama yang sama, sehingga kita bisa membandingkan perilaku masing-masing mekanisme dari output yang dihasilkan.
 
 ## Guided 1
 
@@ -149,7 +164,7 @@ int main (){
 }
 ```
 
-Membuat stack dengan representasi array berukuran maksimal 10, dengan top sebagai penanda elemen paling atas dan nilai -1 yang berarti stack masih kosong. Stack dibuat dulu lewat createStack, lalu diisi angka 1 sampai 5 menggunakan push dan ditampilkan dengan view dari top ke bawah. Setelah itu dilakukan pop dua kali sehingga dua data teratas terhapus, kemudian update dipakai untuk mengubah data berdasarkan posisinya yang dihitung dari top, yaitu posisi ke-2 dan ke-1 dengan nilai baru yang diinput user. Terakhir, searchData mencari angka 4 dan 9, lalu menampilkan posisinya kalau ketemu atau pesan tidak ditemukan kalau tidak ada. Setiap operasi dicek dulu dengan isEmpty dan isFull supaya tidak terjadi underflow maupun overflow.
+Program ini membuat queue dengan representasi linked list, di mana setiap elemen berupa node yang menyimpan nama dan penunjuk next, sedangkan queue dipegang oleh pointer head (depan) dan tail (belakang) dan dianggap kosong kalau keduanya NULL. Setelah dibuat lewat createQueue, enqueue menambahkan node baru di belakang dengan mengaitkan next dari tail lama ke node baru lalu memindahkan tail, sementara dequeue menghapus node di depan dengan memajukan head dan mengembalikan tail ke NULL kalau queue jadi kosong. Di main, enam nama (Dominic sampai Mia) dimasukkan lalu ditampilkan dengan viewQueue, kemudian dequeue dipanggil empat kali sehingga empat nama terdepan keluar lebih dulu sesuai prinsip FIFO dan tersisa Brian dan Mia. Fungsi clearQueue dan isFull melengkapi program untuk mengosongkan queue dan mengecek batas MaxQueue sebesar 20.
 
 ## Guided 2
 
@@ -290,7 +305,7 @@ int main(){
     return 0;
 }
 ```
-Membuat stack dengan representasi linked list, jadi setiap data disimpan dalam node yang punya dataAngka dan pointer next, sedangkan top menunjuk node paling atas dan bernilai Nil kalau stack kosong. Node dibuat dulu dengan alokasi, lalu dimasukkan lewat push yang menaruh node baru di atas top, sehingga pada main angka 1 sampai 5 masuk berurutan dan isinya ditampilkan dari 5 ke 1 oleh view. Operasi pop menghapus node paling atas dengan memindahkan top ke node berikutnya lalu melepas memorinya dengan dealokasi, dan dilakukan dua kali sehingga tersisa tiga node. Setelah itu update mengubah data berdasarkan posisi yang dihitung dari top dengan menelusuri pointer next, dan posisi ke-4 dinyatakan tidak valid karena node yang tersisa hanya tiga. Terakhir, searchData menelusuri node dari top untuk mencari angka 4 dan 9, lalu menampilkan posisinya kalau ketemu atau pesan tidak ditemukan kalau tidak ada.
+Program ini membuat queue dengan representasi array berukuran maksimal 5 (MAKSIMAL), di mana nama disimpan dalam array dan dua penanda head serta tail yang bernilai -1 saat queue kosong. Setelah dibuat lewat CreateQueue, enQueue menambahkan nama di posisi tail yang dimajukan satu langkah (kalau masih kosong, head dan tail langsung diset ke 0), sedangkan queue dianggap penuh kalau tail sudah mencapai indeks terakhir sehingga data berikutnya ditolak dengan pesan penuh. Pada deQueue, head tetap diam di indeks 0: semua elemen digeser maju satu langkah untuk menimpa elemen terdepan lalu tail dimundurkan, dan kalau tail jadi kurang dari 0 maka head dan tail dikembalikan ke -1 (kosong). Di main, enam nama dimasukkan sehingga Daffa gagal masuk karena queue sudah penuh oleh lima nama pertama, lalu viewQueue menampilkannya, kemudian deQueue dipanggil empat kali sehingga empat nama terdepan keluar lebih dulu sesuai prinsip FIFO dan tersisa Fathur saja. Mekanisme ini sesuai Alternatif 1 (head diam, tail bergerak), yang mudah dipahami tapi kurang efisien karena setiap dequeue butuh pergeseran elemen.
 
 ## Unguided
 
@@ -669,26 +684,26 @@ int main() {
 
 ![Screenshot Output Unguided 1](Output/S1.png)
 
-Membuat ADT Stack dengan array berukuran 20 yang dilengkapi variabel top sebagai penanda elemen paling atas. Stack dibuat kosong lewat createStack dengan nilai top 0, lalu data ditambahkan memakai push dan dikeluarkan memakai pop sesuai prinsip LIFO. Pada main, data 3, 4, dan 8 dimasukkan, lalu 8 di-pop, 2 dan 3 dimasukkan, 3 di-pop lagi, dan terakhir 9 dimasukkan. Isi stack ditampilkan dengan printInfo dari top ke bawah sehingga hasilnya 9 2 4 3, kemudian dibalik dengan balikStack dan ditampilkan lagi menjadi 3 4 2 9.
+Pake Alternatif 1 yaitu head diam di indeks 0 dan tail bergerak. Queue berupa array berukuran 5 dengan head dan tail bernilai -1 saat kosong. Enqueue memajukan tail lalu menyimpan data, sedangkan dequeue menggeser semua elemen maju satu langkah dan memundurkan tail. Queue penuh kalau tail sudah di indeks terakhir. Cara ini sederhana tapi kurang efisien karena ada pergeseran di setiap dequeue.
 
 ![Screenshot Output Unguided 2](Output/S2.png)
 
-Ditambahkan prosedur pushAscending untuk memasukkan data sambil menjaga isi stack tetap terurut naik dari bawah ke atas. Saat data baru masuk, elemen di atasnya yang lebih besar digeser satu posisi ke atas dulu, lalu data baru disimpan di posisi yang kosong tadi dan top bertambah satu. Data 3, 4, 8, 2, 3, dan 9 dimasukkan dengan cara ini sehingga saat ditampilkan dari top hasilnya 9 8 4 3 3 2. Setelah stack dibalik dengan balikStack, urutan tampilnya menjadi 2 3 3 4 8 9.
+Pake Alternatif 2, yaitu head dan tail sama-sama bergerak. Dequeue cukup memajukan head tanpa menggeser elemen, jadi lebih efisien. Konsekuensinya bisa muncul penuh semu, yaitu tail sudah di indeks terakhir padahal bagian depan array kosong. Karena itu elemen baru digeser ke depan di enqueue, hanya kalau tail sudah mencapai indeks terakhir. Queue benar-benar penuh kalau head = 0 dan tail = MAX - 1.
 
 ![Screenshot Output Unguided 3](Output/S3.png)
 
-Ditambahkan prosedur getInputStream yang membaca input dari user satu karakter demi satu memakai cin.get(). Setiap karakter yang dibaca diubah menjadi angka lalu langsung dimasukkan ke stack dengan push, dan proses ini berhenti ketika user menekan enter. Sebagai contoh, input 4729601 akan tersimpan berurutan sehingga printInfo menampilkannya dari top menjadi 1 0 6 9 2 7 4. Setelah dibalik dengan balikStack, hasilnya kembali sama dengan urutan input, yaitu 4 7 2 9 6 0 1.
+Pake Alternatif 3, yaitu head dan tail berputar (circular buffer). Setelah indeks terakhir, keduanya kembali ke indeks 0 lewat operasi modulo (% MAX), jadi tidak perlu pergeseran dan tidak ada penuh semu. Queue penuh kalau (tail + 1) % MAX == head. Cara ini paling efisien dari ketiga alternatif.
 
 ## Kesimpulan
 
-Saya jadi lebih memahami cara kerja Stack dan bagaimana struktur data ini menyimpan serta mengelola data dengan prinsip LIFO. Saya belajar membuat ADT Stack dengan array, mulai dari createStack, push, pop, sampai menampilkan isi stack dengan printInfo. Saya juga memahami peran top sebagai penanda elemen paling atas yang berubah setiap kali data ditambah atau dihapus. Selain itu, saya belajar membalik isi stack dengan balikStack, menyisipkan data secara terurut dengan pushAscending, dan memasukkan input user ke stack dengan getInputStream. Melalui praktikum ini, saya dapat lebih memahami penerapan Stack dalam program C++.
+Dari praktikum ini saya jadi lebih paham cara kerja Queue dan prinsip FIFO, yaitu data yang pertama masuk akan keluar lebih dulu. Saya belajar membuat Queue dengan representasi linked list dan array, mulai dari createQueue, enqueue, dequeue, sampai menampilkan isinya dengan viewQueue atau printInfo. Saya juga memahami peran head dan tail sebagai penanda ujung depan dan belakang antrean, serta bagaimana keduanya harus dijaga tetap benar, termasuk saat queue kosong. Pada representasi array, saya membandingkan tiga alternatif: Alternatif 1 sederhana tapi kurang efisien karena ada pergeseran di setiap dequeue, Alternatif 2 lebih efisien tapi bisa mengalami penuh semu, dan Alternatif 3 dengan circular buffer paling efisien karena tidak butuh pergeseran. Sementara itu, linked list tidak punya batas jumlah elemen tapi memori harus dikelola sendiri. Melalui praktikum ini, saya dapat lebih memahami penerapan Queue dalam program C++.
 
 ## Referensi
 
-[1] OpenDSA. (t.t.). Stacks. https://opendsa-server.cs.vt.edu/ODSA/Books/CS2/html/StackArray.html
+[1] Laboratorium Informatika. (t.t.). Modul 8: Queue. Modul Praktikum Struktur Data. Fakultas Informatika, Telkom University.
 
-[2] GeeksforGeeks. (t.t.). Stack Data Structure. https://www.geeksforgeeks.org/dsa/stack-data-structure/
+[2] OpenDSA. (t.t.). Queues. https://opendsa-server.cs.vt.edu/ODSA/Books/CS2/html/QueueArray.html
 
-[3] Programiz. (t.t.). Stack Data Structure. https://www.programiz.com/dsa/stack
+[3] GeeksforGeeks. (t.t.). Queue Data Structure. https://www.geeksforgeeks.org/dsa/queue-data-structure/
 
-[4] Setiyawan, R. D., dkk. (2024). Penggunaan Struktur Data Stack dalam Pemrograman C++ dengan Pendekatan Array dan Linked List. JUTECH, 5(2). https://jurnal.stkippersada.ac.id/jurnal/index.php/jutech/article/download/4263/pdf
+[4] Programiz. (t.t.). Queue Data Structure. https://www.programiz.com/dsa/queue
