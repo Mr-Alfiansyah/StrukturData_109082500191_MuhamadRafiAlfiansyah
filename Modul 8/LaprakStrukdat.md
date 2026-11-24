@@ -1,4 +1,4 @@
-# <h1 align="center">Laporan Praktikum Modul 7 - STACK (BAGIAN PERTAMA)</h1>
+# <h1 align="center">Laporan Praktikum Modul 8 - QUEUE </h1>
 
 <p align="center">Muhamad Rafi Alfiansyah - 109082500191</p>
 
@@ -19,201 +19,132 @@ Selain push dan pop, ada beberapa operasi lain. printInfo menampilkan isi stack 
 
 ## Guided 1
 
-### 1. Stack
+### 1. Guided Queue Representasi Linked List
 
-**`stack.h`**
+**`queue.h`**
 
 ```cpp
-#ifndef STACK_TABLE
-#define STACK_TABLE
-#include <iostream>
-using namespace std;
-const int MAX = 10;
+#ifndef QUEUE_H
+#define QUEUE_H
 
-struct stackTable
-{
-    int data[MAX];
-    int top;
+#include <iostream>
+#include <string>
+using namespace std;
+const int MaxQueue = 20;
+
+struct Node {
+    string nama;
+    Node* next;
 };
-bool isEmpty(stackTable s);
-bool isFull(stackTable s);
-void createStack(stackTable &s);
-void push(stackTable &s, int angka);
-void pop(stackTable &s); 
-void update(stackTable &s, int posisi);
-void view(stackTable s);
-void searchData(stackTable s, int data);
+
+struct queue {
+    Node *head, *tail;
+};
+
+void createQueue(queue &Q);
+bool isEmpty(queue Q);
+bool isFull(queue Q);
+void enqueue(queue &Q, const string &nama);
+void dequeue(queue &Q);
+void viewQueue(queue Q);
+void clearQueue(queue &Q);
 #endif
 ```
 
-**`stack.cpp`**
+**`queue.cpp`**
 
 ```cpp
+#include "queue.h"
 
-#include "stack.h"
-#include <iostream>
-using namespace std;
+void createQueue(queue &Q){
+    Q.head = NULL;
+    Q.tail = NULL;
+}
 
-bool isEmpty(stackTable s)
-{
-    return s.top == -1;
+bool isEmpty(queue Q){
+    return (Q.head == NULL && Q.tail == NULL);
 }
-bool isFull(stackTable s)
-{
-    return s.top == MAX - 1;
-}
-void createStack(stackTable &s)
-{
-    s.top = -1;
-}
-void push(stackTable &s, int angka)
-{
 
-    if (isFull(s))
-    {
-        cout << "Stack penuh!" << endl;
+bool isFull(queue Q){
+    Node *nodeBantu = Q.head;
+    int count = 0;
+    while(nodeBantu != NULL){
+        count++;
+        nodeBantu = nodeBantu->next;
     }
-    else
-    {
-        s.top++;
-        s.data[s.top] = angka;
-        cout << "Data" << angka << "berhasil ditambahkan kedalam stack !" << endl;
-    }
+    return (count >= MaxQueue);
 }
 
-void pop(stackTable &s)
-{
-    if (isEmpty(s))
-    {
-        cout << "Stack kosong!" << endl;
-    }
-    else
-    {
-        int val = s.data[s.top];
-        s.top--;
-        cout << "Data" << val << " berhasil dihapus dari stack!" << endl;
+void enqueue(queue &Q, const string &nama){
+    if(isEmpty(Q)){
+        Node *nodeBaru = new Node{nama, NULL};
+        Q.head = nodeBaru;
+        Q.tail = nodeBaru;
+    }else {
+        Node *nodeBantu = new Node{nama, NULL};
+        Q.tail->next = nodeBantu;
+        Q.tail = nodeBantu;
     }
 }
 
-void update(stackTable &s, int posisi)
-{
-    if (isEmpty(s))
-    {
-        cout << "Stack kosong!" << endl;
-    }
-    if (posisi <= 0)
-    {
-        cout << "Posisi tidak valid!" << endl;
-        return;
-    }
-    // index = top
-
-    int idx = s.top - (posisi - 1);
-    if (idx < 0 || idx > s.top)
-    {
-        cout << "Posisi " << posisi << " tidak valid!" << endl;
-        return;
-    }
-
-    cout << "Update data posisi ke-" << posisi << endl;
-    cout << "Masukkan angka : ";
-    cin >> s.data[idx];
-    cout << "Data berhasil diupdate!" << endl;
-    cout << endl;
-}
-
-void view(stackTable s)
-{
-    if (isEmpty(s))
-    {
-        cout << "Stack kosong!" << endl;
-    }
-    else
-    {
-        for (int i = s.top; i >= 0; --i)
-        {
-            cout << s.data[i] << " ";
+void dequeue(queue &Q){
+    if(isEmpty(Q)){
+        cout << "Queue kosong!" << endl;
+    } else {
+        Node *nodeHapus = Q.head;
+        Q.head = Q.head->next;
+        if(Q.head == NULL){
+            Q.tail = NULL;
         }
+        delete nodeHapus;
     }
-    cout << endl;
 }
 
-void searchData(stackTable s, int data)
-{
-    if (isEmpty(s))
-    {
-        cout << "Stack kosong!" << endl;
-        return;
-    }
-
-    cout << "Mencari data " << data << "..." << endl;
-    int posisi = 1;
-    bool found = false;
-
-    for (int i = s.top; i >= 0; --i)
-    {
-        if (s.data[i] == data)
-        {
-            cout << "Data " << data << " ditemukan pada posisi ke-" << posisi << endl;
-            cout << endl;
-            found = true;
-            break;
+void viewQueue(queue Q){
+    if(isEmpty(Q)){
+        cout << "Queue kosong!" << endl;
+    } else {
+        Node *nodeBantu = Q.head;
+        while(nodeBantu != NULL){
+            cout << "Nama : " << nodeBantu->nama << " ";
+            nodeBantu = nodeBantu->next;
         }
-        posisi++;
-    }
-
-    if (!found)
-    {
-        cout << "Data " << data << " tidak ditemukan didalam stack!" << endl;
         cout << endl;
     }
 }
 
+void clearQueue(queue &Q){
+    while(!isEmpty(Q)){
+        dequeue(Q);
+    }
+}
 ```
 
 **`main.cpp`**
 
 ```cpp
-#include "stack.h"
+#include "queue.h"
 #include <iostream>
-
 using namespace std;
 
-int main()
-{
-    stackTable s;
-    createStack(s);
+int main (){
+    queue Q;
+    createQueue(Q);
 
-    push(s, 1);
-    push(s, 2);
-    push(s, 3);
-    push(s, 4);
-    push(s, 5);
-    cout << endl;
-
-    cout << "--- Stack setelah push ---" << endl;
-    view(s);
-    cout << endl;
-
-    pop(s);
-    pop(s);
-    cout << endl;
-
-    cout << "--- Stack setelah pop 2 kali ---" << endl;
-    view(s);
-    cout << endl;
-
-    update(s, 2);
-    update(s, 1);
-    cout << endl;
-
-    cout << "--- Stack setelah update ---" << endl;
-    view(s);
-    cout << endl;
-
-    searchData(s, 4);
-    searchData(s, 9);
-
+    enqueue(Q, "Dominic");
+    enqueue(Q, "Torr");
+    enqueue(Q, "Retto");
+    enqueue(Q, "Letty");
+    enqueue(Q, "Brian");
+    enqueue(Q, "Mia");
+    cout << "Isi Queue sebelum di dequeue: " << endl;
+    viewQueue(Q);
+    dequeue(Q);
+    dequeue(Q);
+    dequeue(Q);
+    dequeue(Q);
+    cout << "Isi Queue setelah di dequeue: " << endl;
+    viewQueue(Q);
     return 0;
 }
 ```
@@ -222,255 +153,139 @@ Membuat stack dengan representasi array berukuran maksimal 10, dengan top sebaga
 
 ## Guided 2
 
-### 2. Stack
+### 2. Guided Queue Representasi Array
 
-**`stack.h`**
+**`queue.h`**
 
 ```cpp
-#ifndef STACK
-#define STACK
-#define Nil NULL
+#ifndef QUEUE_H
+#define QUEUE_H
 
 #include <iostream>
 using namespace std;
-const int MAX = 10;
 
-typedef struct node *address;
+const int MAKSIMAL = 5;
 
-struct node
-{
-    int dataAngka;
-    address next;
+struct queue {
+    string nama[MAKSIMAL];
+    int head;
+    int tail;
 };
 
-struct stack
-{
-    address top;
-};
+bool isFull(queue Q);
+bool isEmpty(queue Q);
+void CreateQueue(queue &Q);
+void enQueue(queue &Q, const string &nama);
+void deQueue(queue &Q);
+void viewQueue(queue Q);
+void clearQueue(queue &Q);
 
-bool isEmpty(stack listStack);
-void createStack(stack &listStack);
-address alokasi(int angka);
-void dealokasi(addresss &node);
-
-void push(stack &listStack, address nodeBaru);
-void pop(stack &listStack); 
-void update(stack &listStack, int posisi);
-void view(stack &listStack);
-void searchData(stack listStack, int data);
 #endif
 ```
 
-**`stack.cpp`**
+**`queue.cpp`**
 
 ```cpp
-#include "stack.h"
+#include "queue.h"
 #include <iostream>
 
 using namespace std;
 
-bool isEmpty(stack listStack)
-{
-    if (listStack.top == Nil)
-    {
+bool isEmpty(queue Q){
+    if(Q.head == -1 && Q.tail == -1){
         return true;
-    }
-    else
-    {
+    } else {
         return false;
     }
 }
 
-void createStack(stack &listStack)
-{
-    listStack.top = Nil;
-}
-
-address alokasi(int angka)
-{
-    address nodeBaru = new node;
-    nodeBaru->dataAngka = angka;
-    nodeBaru->next = Nil;
-    return nodeBaru;
-}
-
-void dealokasi(address &node)
-{
-    node->next = Nil;
-    delete node;
-}
-
-void push(stack &listStack, address nodeBaru)
-{
-    nodeBaru->next = listStack.top;
-    listStack.top = nodeBaru;
-    cout << "Node " << nodeBaru->dataAngka << " berhasil ditambahkan kedalam stack!" << endl;
-}
-
-void pop(stack &listStack)
-{
-    address nodeHapus;
-    if (isEmpty(listStack) == true)
-    {
-        cout << "Stack kosong!" << endl;
-    }
-    else
-    {
-        nodeHapus = listStack.top;
-        listStack.top = listStack.top->next;
-        nodeHapus->next = Nil;
-        dealokasi(nodeHapus);
-        cout << "node " << nodeHapus->dataAngka << " berhasil dihapus dari stack!" << endl;
+bool isFull(queue Q){
+    if(Q.tail == MAKSIMAL - 1){
+        return true;
+    } else {
+        return false;
     }
 }
 
-void update(stack &listStack, int posisi)
-{
-    if (isEmpty(listStack) == true)
-    {
-        cout << "Stack kosong!" << endl;
-    }
-    else
-    {
-        if (posisi == 0)
-        {
-            cout << "Posisi tidak valid!" << endl;
+void CreateQueue(queue &Q){
+    Q.head = -1;
+    Q.tail = -1;
+}
+
+void enQueue(queue &Q, string nama){
+    if(isFull(Q) == true){
+        cout << "Queue sudah penuh!" << endl;
+    } else {
+        if(isEmpty(Q) == true){
+            Q.head = Q.tail = 0;
+        } else {
+            Q.tail++;
         }
-        else
-        {
-            address nodeBantu = listStack.top;
-            int count = 1;
-            bool found = false;
-            while (nodeBantu != Nil)
-            {
-                if (count < posisi)
-                {
-                    nodeBantu = nodeBantu->next;
-                    count++;
-                }
-                else if (count == posisi)
-                {
-                    cout << "Update node poisisi ke-" << posisi << endl;
-                    cout << "Masukkan angka : ";
-                    cin >> nodeBantu->dataAngka;
-                    cout << "Data berhasil diupdate!" << endl;
-                    cout << endl;
-                    found = true;
-                    break;
-                }
-            }
-            if (found == false)
-            {
-                cout << "Posisi " << posisi << " tidak valid!" << endl;
-            }
+        Q.nama[Q.tail] = nama;
+        cout << "nama " << nama << " berhasil ditambahkan kedalam queue!" << endl;
+    }
+}
+
+void deQueue(queue &Q){
+    if(isEmpty(Q) == true){
+        cout << "Queue kosong!" << endl;
+    } else {
+        cout << "Mengahapus data " << Q.nama[Q.head] << "..." << endl;
+        for(int i = 0; i < Q.tail; i++){
+            Q.nama[i] = Q.nama[i+1];
+        }
+        Q.tail--;
+        if(Q.tail < 0){
+            Q.head = -1;
+            Q.tail = -1;
         }
     }
 }
 
-void view(stack listStack)
-{
-    if (isEmpty(listStack) == true)
-    {
-        cout << "List kosong!" << endl;
-    }
-    else
-    {
-        address nodeBantu = listStack.top;
-        while (nodeBantu != Nil)
-        {
-            cout << nodeBantu->dataAngka << " ";
-            nodeBantu = nodeBantu->next;
+void viewQueue(queue Q){
+    if(isEmpty(Q) == true){
+        cout << "Queue kosong!" << endl;
+    } else {
+        for(int i = Q.head; i <= Q.tail; i++){
+            cout << i - Q.head + 1 << ". " << Q.nama[i] << endl;
         }
     }
     cout << endl;
-}
-
-void searchData(stack listStack, int data)
-{
-    if (isEmpty(listStack) == true)
-    {
-        cout << "List kosong!" << endl;
-    }
-    else
-    {
-        address nodeBantu = listStack.top;
-        int posisi = 1;
-        bool found = false;
-        cout << "Mencari data " << data << "..." << endl;
-        while (nodeBantu != Nil)
-        {
-            if (nodeBantu->dataAngka == data)
-            {
-                cout << "Data " << data << " ditemukan pada posisi ke-" << posisi << endl;
-                found = true;
-                cout << endl;
-                break;
-            }
-            else
-            {
-                posisi++;
-                nodeBantu = nodeBantu->next;
-            }
-        }
-        if (found == false)
-        {
-            cout << "Data " << data << " tidak ditemukan didalam stack!" << endl;
-            cout << endl;
-        }
-    }
 }
 ```
 
 **`main.cpp`**
 
 ```cpp
-#include "stack.h"
+#include "queue.h"
 #include <iostream>
 
 using namespace std;
 
-int main()
-{
-    stack listStack;
-    address nodeA, nodeB, nodeC, nodeD, nodeE = Nil;
-    createStack(listStack);
+int main(){
+    queue Q;
 
-    nodeA = alokasi(1);
-    nodeB = alokasi(2);
-    nodeC = alokasi(3);
-    nodeD = alokasi(4);
-    nodeE = alokasi(5);
-
-    push(listStack, nodeA);
-    push(listStack, nodeB);
-    push(listStack, nodeC);
-    push(listStack, nodeD);
-    push(listStack, nodeE);
+    CreateQueue(Q);
+    enQueue(Q, "Dimas");
+    enQueue(Q, "Arvin");
+    enQueue(Q, "Rizal");
+    enQueue(Q, "Hafizh");
+    enQueue(Q, "Fathur");
+    enQueue(Q, "Daffa");
     cout << endl;
 
-    cout << "--- Stack setelah push ---" << endl;
-    view(listStack);
+    cout << "--- Isi Queue Setelah enQueue ---" << endl;
+    viewQueue(Q);
     cout << endl;
 
-    pop(listStack);
-    pop(listStack);
+    deQueue(Q);
+    deQueue(Q);
+    deQueue(Q);
+    deQueue(Q);
     cout << endl;
 
-    cout << "--- Stack setelah pop 2 kali ---" << endl;
-    view(listStack);
-    cout << endl;
-
-    update(listStack, 2);
-    update(listStack, 1);
-    update(listStack, 4);
-    cout << endl;
-
-    cout << "--- Stack setelah update ---" << endl;
-    view(listStack);
-    cout << endl;
-
-    searchData(listStack, 4);
-    searchData(listStack, 9);
+    cout << "--- Isi Queue Setelah deQueue ---" << endl;
+    viewQueue(Q);
 
     return 0;
 }
@@ -479,109 +294,97 @@ Membuat stack dengan representasi linked list, jadi setiap data disimpan dalam n
 
 ## Unguided
 
-### 1.  ADT Stack menggunakan ARRAY 
+### 1.  Soal 1 - Alternatif 1: `Head` Diam dan `Tail` Bergerak 
 
-**`stack.h`**
+**`queue.h`**
 
 ```cpp
-#ifndef STACK_H_INCLUDED
-#define STACK_H_INCLUDED
+#ifndef QUEUE_H
+#define QUEUE_H
+
+#include <iostream>
+using namespace std;
+
+const int MAX = 5;
 
 typedef int infotype;
 
-struct Stack {
-    infotype info[20];
-    int top;
+struct Queue {
+    infotype info[MAX];
+    int head;
+    int tail;
 };
 
-void createStack(Stack &S);
-void push(Stack &S, infotype x);
-infotype pop(Stack &S);
-void pushAscending(Stack &S, int x);
-void getInputStream(Stack &S);
-void printInfo(Stack S);
-void balikStack(Stack &S);
+void createQueue(Queue &Q);
+bool isEmptyQueue(Queue Q);
+bool isFullQueue(Queue Q);
+void enqueue(Queue &Q, infotype x);
+infotype dequeue(Queue &Q);
+void printInfo(Queue Q);
 
 #endif
 
 ```
 
-**`stack.cpp`**
+**`queue.cpp`**
 
 ```cpp
-#include <iostream>
-#include "stack.h"
+#include "queue.h"
 
-using namespace std;
-
-void createStack(Stack &S) {
-    S.top = 0;
+void createQueue(Queue &Q) {
+    Q.head = -1;
+    Q.tail = -1;
 }
 
-void push(Stack &S, infotype x) {
-    if (S.top < 19) {
-        S.top = S.top + 1;
-        S.info[S.top] = x;
-    } else {
-        cout << "Stack penuh" << endl;
+bool isEmptyQueue(Queue Q) {
+    return Q.head == -1 && Q.tail == -1;
+}
+
+bool isFullQueue(Queue Q) {
+    return Q.tail == MAX - 1;
+}
+
+void enqueue(Queue &Q, infotype x) {
+    if (isFullQueue(Q)) {
+        cout << "Queue penuh" << endl;
+        return;
     }
+    if (isEmptyQueue(Q)) {
+        Q.head = 0;
+        Q.tail = 0;
+    } else {
+        Q.tail++;
+    }
+    Q.info[Q.tail] = x;
 }
 
-infotype pop(Stack &S) {
-    infotype x = 0;
-    if (S.top > 0) {
-        x = S.info[S.top];
-        S.top = S.top - 1;
-    } else {
-        cout << "Stack kosong" << endl;
+infotype dequeue(Queue &Q) {
+    if (isEmptyQueue(Q)) {
+        cout << "Queue kosong" << endl;
+        return -1;
+    }
+    infotype x = Q.info[Q.head];
+    for (int i = Q.head; i < Q.tail; i++) {
+        Q.info[i] = Q.info[i + 1];
+    }
+    Q.tail--;
+    if (Q.tail < Q.head) {
+        Q.head = -1;
+        Q.tail = -1;
     }
     return x;
 }
 
-void pushAscending(Stack &S, int x) {
-    if (S.top < 19) {
-        int i = S.top;
-        while (i >= 1 && S.info[i] > x) {
-            S.info[i + 1] = S.info[i];
-            i--;
-        }
-        S.info[i + 1] = x;
-        S.top = S.top + 1;
-    } else {
-        cout << "Stack penuh" << endl;
+void printInfo(Queue Q) {
+    cout << Q.head << " - " << Q.tail << " \t | ";
+    if (isEmptyQueue(Q)) {
+        cout << "empty queue" << endl;
+        return;
     }
-}
-
-void getInputStream(Stack &S) {
-    char c;
-    c = cin.get();
-    while (c != '\n') {
-        push(S, c - '0');
-        c = cin.get();
-    }
-}
-
-void printInfo(Stack S) {
-    cout << "[TOP] ";
-    for (int i = S.top; i >= 1; i--) {
-        cout << S.info[i];
-        if (i > 1) {
-            cout << " ";
-        }
+    for (int i = Q.head; i <= Q.tail; i++) {
+        cout << Q.info[i] << " ";
     }
     cout << endl;
-}
-
-void balikStack(Stack &S) {
-    int i = 1;
-    int j = S.top;
-    while (i < j) {
-        infotype temp = S.info[i];
-        S.info[i] = S.info[j];
-        S.info[j] = temp;
-        i++;
-        j--;
-    }
 }
 
 ```
@@ -589,54 +392,277 @@ void balikStack(Stack &S) {
 **`main.cpp`**
 
 ```cpp
-#include <iostream>
-#include "stack.h"
+#include "queue.h"
 
-using namespace std;
+int main() {
+    cout << "Hello World" << endl;
+    Queue Q;
+    createQueue(Q);
 
-int main()
-{
-    cout << "Hello world!" << endl;
-
-    cout << endl << "Soal 1" << endl;
-    Stack S;
-    createStack(S);
-    push(S, 3);
-    push(S, 4);
-    push(S, 8);
-    pop(S);
-    push(S, 2);
-    push(S, 3);
-    pop(S);
-    push(S, 9);
-    printInfo(S);
-    cout << "balik stack" << endl;
-    balikStack(S);
-    printInfo(S);
-
-    cout << endl << "Soal 2" << endl;
-    createStack(S);
-    pushAscending(S, 3);
-    pushAscending(S, 4);
-    pushAscending(S, 8);
-    pushAscending(S, 2);
-    pushAscending(S, 3);
-    pushAscending(S, 9);
-    printInfo(S);
-    cout << "balik stack" << endl;
-    balikStack(S);
-    printInfo(S);
-
-    cout << endl << "Soal 3" << endl;
-    createStack(S);
-    getInputStream(S);
-    printInfo(S);
-    cout << "balik stack" << endl;
-    balikStack(S);
-    printInfo(S);
+    cout << "----------------------" << endl;
+    cout << " H - T \t | Queue info" << endl;
+    cout << "----------------------" << endl;
+    printInfo(Q);
+    enqueue(Q, 5); printInfo(Q);
+    enqueue(Q, 2); printInfo(Q);
+    enqueue(Q, 7); printInfo(Q);
+    dequeue(Q); printInfo(Q);
+    enqueue(Q, 4); printInfo(Q);
+    dequeue(Q); printInfo(Q);
+    dequeue(Q); printInfo(Q);
 
     return 0;
 }
+
+```
+
+### 2. Soal 2 - Alternatif 2: `Head` dan `Tail` Bergerak
+
+**`queue.h`**
+
+```cpp
+#ifndef QUEUE_H
+#define QUEUE_H
+
+#include <iostream>
+using namespace std;
+
+const int MAX = 5;
+
+typedef int infotype;
+
+struct Queue {
+    infotype info[MAX];
+    int head;
+    int tail;
+};
+
+void createQueue(Queue &Q);
+bool isEmptyQueue(Queue Q);
+bool isFullQueue(Queue Q);
+void enqueue(Queue &Q, infotype x);
+infotype dequeue(Queue &Q);
+void printInfo(Queue Q);
+
+#endif
+```
+
+**`queue.cpp`**
+
+```cpp
+#include "queue.h"
+
+void createQueue(Queue &Q) {
+    Q.head = -1;
+    Q.tail = -1;
+}
+
+bool isEmptyQueue(Queue Q) {
+    return Q.head == -1 && Q.tail == -1;
+}
+
+bool isFullQueue(Queue Q) {
+    return Q.head == 0 && Q.tail == MAX - 1;
+}
+
+void enqueue(Queue &Q, infotype x) {
+    if (isFullQueue(Q)) {
+        cout << "Queue penuh" << endl;
+        return;
+    }
+    if (isEmptyQueue(Q)) {
+        Q.head = 0;
+        Q.tail = 0;
+    } else {
+        if (Q.tail == MAX - 1) {
+            int n = Q.tail - Q.head + 1;
+            for (int i = 0; i < n; i++) {
+                Q.info[i] = Q.info[Q.head + i];
+            }
+            Q.head = 0;
+            Q.tail = n - 1;
+        }
+        Q.tail++;
+    }
+    Q.info[Q.tail] = x;
+}
+
+infotype dequeue(Queue &Q) {
+    if (isEmptyQueue(Q)) {
+        cout << "Queue kosong" << endl;
+        return -1;
+    }
+    infotype x = Q.info[Q.head];
+    if (Q.head == Q.tail) {
+        Q.head = -1;
+        Q.tail = -1;
+    } else {
+        Q.head++;
+    }
+    return x;
+}
+
+void printInfo(Queue Q) {
+    cout << Q.head << " - " << Q.tail << " \t | ";
+    if (isEmptyQueue(Q)) {
+        cout << "empty queue" << endl;
+        return;
+    }
+    for (int i = Q.head; i <= Q.tail; i++) {
+        cout << Q.info[i] << " ";
+    }
+    cout << endl;
+}
+
+```
+
+**`main.cpp`**
+
+```cpp
+#include "queue.h"
+
+int main() {
+    cout << "Hello World" << endl;
+    Queue Q;
+    createQueue(Q);
+
+    cout << "----------------------" << endl;
+    cout << " H - T \t | Queue info" << endl;
+    cout << "----------------------" << endl;
+    printInfo(Q);
+    enqueue(Q, 5); printInfo(Q);
+    enqueue(Q, 2); printInfo(Q);
+    enqueue(Q, 7); printInfo(Q);
+    dequeue(Q); printInfo(Q);
+    enqueue(Q, 4); printInfo(Q);
+    dequeue(Q); printInfo(Q);
+    dequeue(Q); printInfo(Q);
+
+    return 0;
+}
+```
+
+### 3. Soal 3 - Alternatif 3: `Head` dan `Tail` Berputar
+
+**`queue.h`**
+
+```cpp
+#ifndef QUEUE_H
+#define QUEUE_H
+
+#include <iostream>
+using namespace std;
+
+const int MAX = 5;
+
+typedef int infotype;
+
+struct Queue {
+    infotype info[MAX];
+    int head;
+    int tail;
+};
+
+void createQueue(Queue &Q);
+bool isEmptyQueue(Queue Q);
+bool isFullQueue(Queue Q);
+void enqueue(Queue &Q, infotype x);
+infotype dequeue(Queue &Q);
+void printInfo(Queue Q);
+
+#endif
+
+```
+
+**`queue.cpp`**
+
+```cpp
+#include "queue.h"
+
+void createQueue(Queue &Q) {
+    Q.head = -1;
+    Q.tail = -1;
+}
+
+bool isEmptyQueue(Queue Q) {
+    return Q.head == -1 && Q.tail == -1;
+}
+
+bool isFullQueue(Queue Q) {
+    return !isEmptyQueue(Q) && (Q.tail + 1) % MAX == Q.head;
+}
+
+void enqueue(Queue &Q, infotype x) {
+    if (isFullQueue(Q)) {
+        cout << "Queue penuh" << endl;
+        return;
+    }
+    if (isEmptyQueue(Q)) {
+        Q.head = 0;
+        Q.tail = 0;
+    } else {
+        Q.tail = (Q.tail + 1) % MAX;
+    }
+    Q.info[Q.tail] = x;
+}
+
+infotype dequeue(Queue &Q) {
+    if (isEmptyQueue(Q)) {
+        cout << "Queue kosong" << endl;
+        return -1;
+    }
+    infotype x = Q.info[Q.head];
+    if (Q.head == Q.tail) {
+        Q.head = -1;
+        Q.tail = -1;
+    } else {
+        Q.head = (Q.head + 1) % MAX;
+    }
+    return x;
+}
+
+void printInfo(Queue Q) {
+    cout << Q.head << " - " << Q.tail << " \t | ";
+    if (isEmptyQueue(Q)) {
+        cout << "empty queue" << endl;
+        return;
+    }
+    int n = (Q.tail - Q.head + MAX) % MAX + 1;
+    int i = Q.head;
+    for (int k = 0; k < n; k++) {
+        cout << Q.info[i] << " ";
+        i = (i + 1) % MAX;
+    }
+    cout << endl;
+}
+
+```
+
+**`main.cpp`**
+
+```cpp
+#include "queue.h"
+
+int main() {
+    cout << "Hello World" << endl;
+    Queue Q;
+    createQueue(Q);
+
+    cout << "----------------------" << endl;
+    cout << " H - T \t | Queue info" << endl;
+    cout << "----------------------" << endl;
+    printInfo(Q);
+    enqueue(Q, 5); printInfo(Q);
+    enqueue(Q, 2); printInfo(Q);
+    enqueue(Q, 7); printInfo(Q);
+    dequeue(Q); printInfo(Q);
+    enqueue(Q, 4); printInfo(Q);
+    dequeue(Q); printInfo(Q);
+    dequeue(Q); printInfo(Q);
+
+    return 0;
+}
+
 ```
 
 #### Output Unguided
